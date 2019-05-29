@@ -1,24 +1,30 @@
 package Gui;
 
+import Logic.Controller;
 import javafx.application.Application;
 import javafx.scene.Scene;
-import javafx.scene.control.Alert;
-import javafx.scene.control.ButtonBar;
-import javafx.scene.control.ButtonType;
 import javafx.scene.layout.BorderPane;
-import javafx.scene.layout.Pane;
 import javafx.stage.Stage;
 
 public class GameWindow extends Application {
+    private Controller controller;
 
     @Override
     public void start(Stage stage) {
+        initialize();
+
         BorderPane mainLayout = new BorderPane();
 
         Scene scene = new Scene(mainLayout, 600, 400);
         stage.setScene(scene);
         stage.setTitle("AirWar");
         stage.show();
+
+    }
+
+    private void initialize() {
+        this.controller = new Controller();
+        this.controller.setGameWindow(this);
     }
 
     public void show() {
