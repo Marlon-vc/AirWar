@@ -5,51 +5,50 @@ import javafx.scene.image.ImageView;
 
 public class Sprite {
 
-    ImageView spriteImage;
+    ImageView image;
     double posX;
     double posY;
     double rotation;
 
     Sprite() {
-        this.spriteImage = new ImageView();
+        this.image = new ImageView();
         this.posX = 0;
         this.posY = 0;
         this.rotation = 0;
     }
 
-    Sprite(Image spriteImage) {
-        this.spriteImage = new ImageView(spriteImage);
+    Sprite(Image image) {
+        this.image = new ImageView(image);
         this.posX = 0;
         this.posY = 0;
         this.rotation = 0;
     }
 
-    Sprite(Image spriteImage, double posX, double posY) {
-        this.spriteImage = new ImageView(spriteImage);
+    Sprite(Image image, double posX, double posY) {
+        this.image = new ImageView(image);
         this.posX = posX;
         this.posY = posY;
-        this.spriteImage.setX(this.posX);
-        this.spriteImage.setY(this.posY);
+        this.image.setX(this.posX);
+        this.image.setY(this.posY);
         this.rotation = 0;
     }
 
     public ImageView getImage() {
-        return spriteImage;
+        return image;
     }
 
     public void setImage(Image image) {
-        this.spriteImage.setImage(image);
+        this.image.setImage(image);
     }
 
     public void setSize(double size) {
-        this.spriteImage.setPreserveRatio(true);
-        this.spriteImage.setFitWidth(size);
-//        this.spriteImage.setFitHeight(size);
+        this.image.setPreserveRatio(true);
+        this.image.setFitWidth(size);
     }
 
     public void rotate(double degrees) {
         this.rotation = degrees;
-        this.spriteImage.setRotate(this.rotation);
+        this.image.setRotate(this.rotation);
     }
 
     public double getPosX() {
@@ -58,7 +57,7 @@ public class Sprite {
 
     public void setPosX(double posX) {
         this.posX = posX;
-        this.spriteImage.setX(this.posX);
+        this.image.setX(this.posX);
     }
 
     public double getPosY() {
@@ -67,7 +66,7 @@ public class Sprite {
 
     public void setPosY(double posY) {
         this.posY = posY;
-        this.spriteImage.setY(this.posY);
+        this.image.setY(this.posY);
     }
 
     public void moveX(double xMovement) {
@@ -81,6 +80,22 @@ public class Sprite {
     public double getRotation() {
         return rotation;
     }
+
+
+    /*TODO:
+       Para la trayectoria del avión utilizar una función lineal (y=mx+b).
+       Con la posición (x, y) del destino y la actual del avión calcular el criterio de la función.
+       Luego calcular la distancia en X entre los puntos, y dividirla en partes (unas 10 o más).
+       Para cada parte (posición en X) calcular la posición respectiva en Y, utilizando la función lineal.
+       Mover el avión repitiendo los pasos, sumando a la posición en X una parte.
+       .
+
+      TODO:
+       Para el ángulo de rotación del avión calcular el ángulo entre la recta que contiene al avión y al destino,
+       con respecto a la horizontal, y girar el avión esa cantidad de grados.
+       .
+       https://stackoverflow.com/questions/2676719/calculating-the-angle-between-the-line-defined-by-two-points
+    * */
 
     public void setRotation(double rotation) {
         this.rotation = rotation;

@@ -16,25 +16,13 @@ public class Airport extends Sprite {
         init();
     }
 
-    public Airport(Image airportImage) {
-        super(airportImage);
-        this.planes = new LinkedList<>();
-        init();
-    }
-
-    public Airport() {
-        super();
-        this.planes = new LinkedList<>();
-        init();
-    }
-
     private void init() {
         Tooltip tooltip = new Tooltip();
         tooltip.setText("Airport " + hashCode() + "\nPos X: " + posX + "\nPos Y: " + posY);
-        Tooltip.install(spriteImage, tooltip);
+        Tooltip.install(image, tooltip);
 
-        spriteImage.setOnMouseEntered(mouseEvent -> spriteImage.setEffect(new DropShadow(5, Color.LIGHTGRAY)));
-        spriteImage.setOnMouseExited(mouseEvent -> spriteImage.setEffect(null));
+        image.setOnMouseEntered(mouseEvent -> image.setEffect(new DropShadow(5, Color.LIGHTGRAY)));
+        image.setOnMouseExited(mouseEvent -> image.setEffect(null));
     }
 
 }

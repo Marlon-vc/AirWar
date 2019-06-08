@@ -35,8 +35,4 @@ public class Plane extends Sprite {
         this.life = life;
     }
 
-    public static void main(String[] args) {
-        Plane plane = new Plane();
-    }
-
 }
