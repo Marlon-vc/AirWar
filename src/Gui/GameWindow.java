@@ -8,39 +8,33 @@ import javafx.scene.image.ImageView;
 import javafx.scene.layout.BorderPane;
 import javafx.stage.Stage;
 
-import java.awt.*;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-
 public class GameWindow extends Application {
     private Controller controller;
+    private BorderPane mainLayout;
 
     @Override
-    public void start(Stage stage) throws FileNotFoundException {
+    public void start(Stage stage) {
         initialize();
-        String root=System.getProperty("user.dir");
-        String rutaRlativa="/AirWar/res/images/map.jpg";
-        String url=root+rutaRlativa;
-        FileInputStream i = new FileInputStream(url);
-        ImageView addTokenImage = new ImageView(new Image(i));
-        //////////////////////////////////////////////////////
 
-        i = new FileInputStream("/home/hazel/Escritorio/airWar/AirWar/res/images/airport.png");
-        ImageView addTokenImage1 = new ImageView(new Image(i));
-        addTokenImage1.setX(50);
-        addTokenImage1.setY(50);
+        mainLayout = new BorderPane();
 
-        BorderPane mainLayout = new BorderPane();
-        mainLayout.getChildren().addAll(addTokenImage,addTokenImage1);
-        Scene scene = new Scene(mainLayout, 1920, 1024);
+        ImageView mapImageView = new ImageView(Controller.loadImage("/res/images/map.jpg"));
+        mapImageView.setFitHeight(720);
+        mapImageView.setFitWidth(1280);
+
+        mainLayout.getChildren().addAll(mapImageView);
+
+        Scene scene = new Scene(mainLayout, 1280, 720);
         stage.setScene(scene);
         stage.setTitle("AirWar");
+        stage.setResizable(false);
         stage.show();
 
+        controller.load(25);
     }
 
     private void initialize() {
-        this.controller = new Controller();
+        this.controller = Controller.getInstance();
         this.controller.setGameWindow(this);
     }
 
