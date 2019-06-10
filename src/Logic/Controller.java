@@ -5,6 +5,7 @@ import Sprites.Airport;
 import Structures.LinkedList;
 import javafx.scene.image.Image;
 
+import java.util.Random;
 import java.util.concurrent.ThreadLocalRandom;
 
 public class Controller {
@@ -61,6 +62,29 @@ public class Controller {
     public static Image loadImage(String relativePath) {
         return new Image("file://" +
                 (System.getProperty("user.dir") + relativePath).replaceAll(" ", "%20"));
+    }
+
+    public static LinkedList<Ruta> generateRuta(LinkedList<Airport> aeropuertos, int cantidad){
+        //cantidad es la variable para ver cuantos aeropuertos quiero
+        LinkedList<Ruta> listaRutas = new LinkedList<>();
+        Random rand = new Random();
+        Ruta nuevaRuta = new Ruta();
+
+        for(int i = 0; i < cantidad; i++){
+            int rand_int1 = rand.nextInt(aeropuertos.getSize());
+            int rand_int2 = rand.nextInt(aeropuertos.getSize());
+            if(rand_int1 != rand_int2) {
+                nuevaRuta.setX1(aeropuertos.get(rand_int1).getPosX());
+                nuevaRuta.setY1(aeropuertos.get(rand_int1).getPosY());
+                nuevaRuta.setX2(aeropuertos.get(rand_int2).getPosX());
+                nuevaRuta.setY2(aeropuertos.get(rand_int2).getPosY());
+                listaRutas.add(nuevaRuta);
+            }
+            else {
+                i--;
+            }
+        }
+        return listaRutas;
     }
 
     public void setGameWindow(GameWindow gameWindow) {
