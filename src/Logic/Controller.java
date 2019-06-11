@@ -3,7 +3,9 @@ package Logic;
 import Gui.GameWindow;
 import Sprites.Airport;
 import Structures.LinkedList;
+import javafx.application.Platform;
 import javafx.scene.image.Image;
+import javafx.scene.layout.Pane;
 
 import java.util.Random;
 import java.util.concurrent.ThreadLocalRandom;
@@ -13,6 +15,7 @@ public class Controller {
     private static Controller instance;
 
     private GameWindow gameWindow;
+
     private LinkedList<Airport> airportList;
 
     private Image airportImage;
@@ -28,11 +31,11 @@ public class Controller {
         return instance;
     }
 
-    public void load(int airportCount) {
+    public void load(int airportCount, Pane container) {
         System.out.println("Loading..");
         Thread loadThread = new Thread(() -> {
             generateAirports(airportCount);
-            renderAirports();
+            renderAirports(container);
             System.out.println("..done");
         });
 
@@ -55,8 +58,12 @@ public class Controller {
         }
     }
 
-    public void renderAirports() {
+    public void renderAirports(Pane container) {
         //TODO mostrar los aeropuertos en la ventana principal.
+        for (int i=0; i<airportList.getSize(); i++) {
+            int finalI = i;
+            Platform.runLater(() -> container.getChildren().add(airportList.get(finalI).getImage()));
+        }
     }
 
     public static Image loadImage(String relativePath) {
