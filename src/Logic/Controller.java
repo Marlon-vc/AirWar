@@ -2,6 +2,7 @@ package Logic;
 
 import Gui.GameWindow;
 import Sprites.Airport;
+import Structures.AdjacencyMatrix;
 import Structures.LinkedList;
 import javafx.application.Platform;
 import javafx.scene.image.Image;
@@ -13,10 +14,10 @@ import java.util.concurrent.ThreadLocalRandom;
 public class Controller {
 
     private static Controller instance;
-
     private GameWindow gameWindow;
 
     private LinkedList<Airport> airportList;
+    private AdjacencyMatrix airportRoutes;
 
     private Image airportImage;
 
@@ -35,6 +36,7 @@ public class Controller {
         System.out.println("Loading..");
         Thread loadThread = new Thread(() -> {
             generateAirports(airportCount);
+            this.airportRoutes = new AdjacencyMatrix(airportList);
             renderAirports(container);
             System.out.println("..done");
         });
@@ -43,11 +45,11 @@ public class Controller {
         loadThread.start();
     }
 
-    public void generateAirports(int count) {
+    private void generateAirports(int count) {
         airportList = new LinkedList<>();
 
         for (int i=0; i<count; i++) {
-            Airport airport = new Airport(airportImage,
+            Airport airport = new Airport(airportImage, i,
                     ThreadLocalRandom.current().nextDouble(0, 1281),
                     ThreadLocalRandom.current().nextDouble(0, 721));
             airport.setSize(25);
@@ -67,8 +69,13 @@ public class Controller {
     }
 
     public static Image loadImage(String relativePath) {
-        return new Image("file://" +
-                (System.getProperty("user.dir") + relativePath).replaceAll(" ", "%20"));
+        try {
+            return new Image("file://" +
+                    (System.getProperty("user.dir") + relativePath).replaceAll(" ", "%20"));
+        } catch (IllegalArgumentException e) {
+            System.out.println("Couln't load " + relativePath);
+        }
+        return null;
     }
 
     public static LinkedList<Ruta> generateRuta(LinkedList<Airport> aeropuertos, int cantidad){
