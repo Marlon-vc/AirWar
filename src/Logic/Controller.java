@@ -5,6 +5,7 @@ import Sprites.Airport;
 import Structures.AdjacencyMatrix;
 import Structures.LinkedList;
 import javafx.application.Platform;
+import javafx.scene.control.Alert;
 import javafx.scene.image.Image;
 import javafx.scene.layout.Pane;
 
@@ -68,6 +69,11 @@ public class Controller {
         }
     }
 
+    /**
+     * Método encargado de cargar una imagen desde la ruta especificada.
+     * @param relativePath Ruta relativa de la imagen.
+     * @return Instancia de la imagen.
+     */
     public static Image loadImage(String relativePath) {
         try {
             return new Image("file://" +
@@ -76,6 +82,20 @@ public class Controller {
             System.out.println("Couln't load " + relativePath);
         }
         return null;
+    }
+
+    /**
+     * Método para mostrar una alerta al usuario
+     * @param message Mensaje a mostrar
+     * @param title Título de la alerta
+     * @param type Tipo de alerta
+     */
+    public static void showAlert(String message, String title, Alert.AlertType type) {
+        Alert showID = new Alert(type);
+        showID.setTitle(title);
+        showID.setHeaderText(null);
+        showID.setContentText(message);
+        showID.showAndWait();
     }
 
     public static LinkedList<Ruta> generateRuta(LinkedList<Airport> aeropuertos, int cantidad){
