@@ -53,6 +53,10 @@ public class GameWindow extends Application {
         return this.mainLayout;
     }
 
+    private void initGameWindow(){
+
+    }
+
     private void initialize() {
         this.controller = Controller.getInstance();
         this.controller.setGameWindow(this);
