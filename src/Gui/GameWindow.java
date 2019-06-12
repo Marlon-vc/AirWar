@@ -76,6 +76,10 @@ public class GameWindow extends Application {
         controller.load(3, mainLayout);
     }
 
+    private void initGameWindow(){
+
+    }
+
     private void initialize() {
         this.controller = Controller.getInstance();
         this.controller.setGameWindow(this);
