@@ -1,6 +1,7 @@
 package Gui;
 
 
+import Logic.Controller;
 import javafx.application.Application;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
@@ -61,11 +62,7 @@ public class InitialWindow extends Application {
         numberOfAirports.setPrefWidth(100);
         numberOfAirports.setMaxWidth(100);
 
-        ImageView background = new ImageView(loadImg("res/images/airplane.png"));
-        background.setFitHeight(200);
-        background.setFitWidth(200);
-
-        ImageView playButton = new ImageView(loadImg("res/images/game-control.png"));
+        ImageView playButton = new ImageView(Controller.loadImage("res/images/game-control.png"));
         playButton.setFitHeight(60);
         playButton.setFitWidth(60);
 
@@ -75,7 +72,7 @@ public class InitialWindow extends Application {
                 int airports = numberOfAirports.getValue();
                 System.out.println("Iniciando el juego de " + playerName + ", con " + airports + " aeropuertos...");
             } else {
-                showAlert("Por favor ingrese su nombre", "Completar campos",
+                Controller.showAlert("Por favor ingrese su nombre", "Completar campos",
                         Alert.AlertType.ERROR);
             }
         });
@@ -95,31 +92,6 @@ public class InitialWindow extends Application {
 
         requiredInfoContainer.getChildren().addAll(name, nameText, airportsLabel, numberOfAirports);
         mainLayout.getChildren().addAll(topContainer, requiredInfoContainer, playButton);
-    }
-
-    /**
-     * Método encargado de cargar una imagen desde la ruta especificada.
-     * @param relativePath Ruta relativa de la imagen.
-     * @return Instancia de la imagen.
-     */
-
-    private Image loadImg(String relativePath) {
-        String cwd = System.getProperty("user.dir");
-        return new Image("file://" + cwd + "/" + relativePath);
-    }
-
-    /**
-     * Método para mostrar una alerta al usuario
-     * @param message Mensaje a mostrar
-     * @param title Título de la alerta
-     * @param type Tipo de alerta
-     */
-    private void showAlert(String message, String title, Alert.AlertType type) {
-        Alert showID = new Alert(type);
-        showID.setTitle(title);
-        showID.setHeaderText(null);
-        showID.setContentText(message);
-        showID.showAndWait();
     }
 
     /**
