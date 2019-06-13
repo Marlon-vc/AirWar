@@ -10,6 +10,7 @@ import javafx.scene.control.Alert;
 import javafx.scene.image.Image;
 import javafx.scene.layout.Pane;
 
+import java.time.Clock;
 import java.util.Random;
 import java.util.concurrent.ThreadLocalRandom;
 
@@ -217,5 +218,23 @@ public class Controller {
      */
     public void setGameWindow(GameWindow gameWindow) {
         this.gameWindow = gameWindow;
+    }
+    public void generatePlane(){
+        Random random = new Random();
+        int index = random.nextInt(airportList.getSize()-1);
+        // El valor de cantidad se debe asociar a la cantidad de aeropuertos que escoja el jugador
+        LinkedList<Ruta> ruta = generateRuta(airportList, 3);
+        //Verificar que imagen es la definitiva para los aviones y si se utilizan todas se puede implementar una lista para accesar aleatoriamente y escoger la imagen
+        Image avion = loadImage("res/images/plane3.png");
+        //Se utiliza speed = 1 para realizar las pruebas iniciales, mas adelante se puede implementar un valor distinto
+        new Plane(avion, airportList.get(index).getPosX(), airportList.get(index).getPosY(), ruta ,1);
+    }
+
+    public void randomTime(){
+//        Duration tickDuration = Duration.ofNanos(250000);
+//        Clock clock1 = Clock.tick(baseclock, tickDuration);
+//        System.out.println("Clock : " + baseclock.instant());
+//        System.out.println("Clock1 : " + clock1.instant());
+
     }
 }

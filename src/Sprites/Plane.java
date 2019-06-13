@@ -1,5 +1,6 @@
 package Sprites;
 
+import Logic.Ruta;
 import Structures.LinkedList;
 import Structures.Queue;
 import javafx.scene.image.Image;
@@ -27,7 +28,7 @@ public class Plane extends Sprite {
     private double m;
     private double b;
 
-    public Plane() {
+    public Plane(Image avion, double posX, double posY, LinkedList<Ruta> ruta, int speed) {
         super();
         this.speed = 1;
     }
