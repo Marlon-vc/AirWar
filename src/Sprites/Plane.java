@@ -2,7 +2,11 @@ package Sprites;
 
 import Structures.LinkedList;
 import Structures.Queue;
+import javafx.scene.control.Tooltip;
+import javafx.scene.effect.DropShadow;
 import javafx.scene.image.Image;
+import javafx.scene.paint.Color;
+import javafx.util.Duration;
 
 /*TODO:
        Para la trayectoria del avión utilizar una función lineal (y=mx+b).
@@ -26,6 +30,8 @@ public class Plane extends Sprite {
 
     private double m;
     private double b;
+    private Tooltip tooltip;
+
 
     public Plane() {
         super();
@@ -37,6 +43,25 @@ public class Plane extends Sprite {
         this.speed = 1;
 
     }
+
+
+    private void init() {
+        tooltip = new Tooltip();
+        tooltip.setText("");
+        //TODO colocar siguiente aeropuerto, destinos por recorrer, velocidad
+        tooltip.setShowDelay(Duration.ZERO);
+
+        Tooltip.install(image, tooltip);
+
+        image.setOnMouseEntered(mouseEvent -> image.setEffect(new DropShadow(5, Color.LIGHTGRAY)));
+        image.setOnMouseExited(mouseEvent -> image.setEffect(null));
+    }
+
+
+    public void setTextToTooltip(String text){
+        tooltip.setText(text);
+    }
+
 
     public double getSpeed() {
         return speed;

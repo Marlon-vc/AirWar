@@ -8,6 +8,7 @@ import Structures.LinkedList;
 import javafx.application.Platform;
 import javafx.scene.control.Alert;
 import javafx.scene.image.Image;
+import javafx.scene.image.PixelReader;
 import javafx.scene.layout.Pane;
 
 import java.util.Random;
@@ -25,9 +26,14 @@ public class Controller {
     private Image planeImage;
     private boolean isGameRunning;
 
+    private AdjacencyMatrix airportRoutes;
+    private ColorUtils colorUtils = new ColorUtils();
+
+
     private Controller() {
         airportImage = loadImage("/res/images/airport2.png");
         planeImage = loadImage("/res/images/plane.png");
+        planesList = new LinkedList<>();
     }
 
     /**
@@ -56,6 +62,7 @@ public class Controller {
             System.out.println("..done");
         });
 
+
         loadThread.setDaemon(true);
         loadThread.start();
     }
@@ -83,7 +90,7 @@ public class Controller {
                     unprocessedSecs -= secsPerTick;
                     tickCount++;
                     if (tickCount % 60 == 0) {
-                        System.out.println(frames + " FPS");
+//                        System.out.println(frames + " FPS");
                         prevTime += 1000;
                         frames = 0;
                     }
@@ -133,31 +140,81 @@ public class Controller {
      * @param count Cantidad de aeropuertos a generar.
      */
     private void generateAirports(int count) {
-
-        System.out.println("Generating airports..");
         airportList = new LinkedList<>();
 
         for (int i=0; i<count; i++) {
-            Airport airport = new Airport(airportImage, i,
-                    ThreadLocalRandom.current().nextDouble(0, 1281),
-                    ThreadLocalRandom.current().nextDouble(0, 721));
+            Airport airport = new Airport(i,
+                    ThreadLocalRandom.current().nextDouble(20, 1260),
+                    ThreadLocalRandom.current().nextDouble(20, 700));
             airport.setTime(ThreadLocalRandom.current().nextDouble(0, 10));
-            airport.setSize(25);
+
+
+            PixelReader pixelReader = gameWindow.getPixelReader();
+
+            int colorInt = pixelReader.getArgb((int) airport.getPosX(), (int) airport.getPosY());
+            int red = (colorInt >> 16) & 0xff;
+            int green = (colorInt >> 8) & 0xff;
+            int blue = colorInt & 0xff;
+
+
+            if (colorInt == -14996115){
+                airport.setImage(Controller.loadImage("/res/images/aircraft-carrier.png"));
+                airport.setSize(35);
+                airport.setCarrier(true);
+                System.out.println("Color of airport :" + airport.getId() + " " +colorInt);
+                System.out.println("Adding carrier.. \n");
+            } else {
+                airport.setImage(Controller.loadImage("/res/images/airport2.png"));
+                airport.setSize(25);
+                airport.setCarrier(false);
+                System.out.println("Color of airport :" + airport.getId() + " " +colorInt);
+                System.out.println("Adding airport.. \n");
+            }
+
             airportList.add(airport);
+
         }
+
     }
+
+    public void moveAirport(){
+        Airport airport = airportList.get(0);
+        Thread thread = new Thread(()->{
+            double posX = airport.getPosX();
+            for (int i = 0; i<1200; i++){
+                double finalPosX = posX;
+                Platform.runLater(()->airport.getImage().setX(finalPosX +1));
+                if (i == 100){
+                    Platform.runLater(()->airport.setTextToTooltip("hola"));
+                }
+                try {
+                    Thread.sleep(100);
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+                posX++;
+            }
+        });
+
+        thread.setDaemon(true);
+        thread.start();
+    }
+
 
     /**
      * Éste método se encarga de mostrar los aeropuertos generados en la interfaz.
      * @param container Contenedor principal de la interfaz.
      */
-    private void renderAirports(Pane container) {
-        System.out.println("Rendering airports..");
+
+
+    public void renderAirports(Pane container) {
+        //TODO mostrar los aeropuertos en la ventana principal.
         for (int i=0; i<airportList.getSize(); i++) {
             int finalI = i;
             Platform.runLater(() -> container.getChildren().add(airportList.get(finalI).getImage()));
         }
     }
+
 
     /**
      * Método encargado de cargar una imagen desde la ruta especificada.

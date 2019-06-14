@@ -83,8 +83,7 @@ public class AdjacencyMatrix {
     public static void main(String[] args) {
         LinkedList<Airport> list = new LinkedList<>();
         for (int i=0; i<5; i++) {
-            list.add(new Airport(
-                    null, i, i*13, i*13+1));
+            list.add(new Airport(i, i*13, i*13+1));
         }
 
         AdjacencyMatrix matrix = new AdjacencyMatrix(list);
