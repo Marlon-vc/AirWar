@@ -16,16 +16,18 @@ import javafx.stage.Stage;
 public class InitialWindow extends Application {
     private String cwd = System.getProperty("user.dir");
     private VBox mainLayout;
-
+    private Controller controller;
 
     @Override
     public void start(Stage stage) {
+        this.controller = Controller.getInstance();
+
         mainLayout = new VBox();
         mainLayout.setAlignment(Pos.CENTER);
         mainLayout.setSpacing(10);
         mainLayout.setId("container-background");
 
-        initInitialWindow();
+        initInitialWindow(stage);
 
 
         Scene scene = new Scene(mainLayout, 600, 400);
@@ -40,7 +42,7 @@ public class InitialWindow extends Application {
     /**
      * Método para cargar la ventana de configuración del juego
      */
-    private void initInitialWindow(){
+    private void initInitialWindow(Stage stage){
 
         VBox requiredInfoContainer = new VBox();
         requiredInfoContainer.setAlignment(Pos.TOP_CENTER);
@@ -62,7 +64,7 @@ public class InitialWindow extends Application {
         numberOfAirports.setPrefWidth(100);
         numberOfAirports.setMaxWidth(100);
 
-        ImageView playButton = new ImageView(Controller.loadImage("res/images/game-control.png"));
+        ImageView playButton = new ImageView(Controller.loadImage("/res/images/game-control.png"));
         playButton.setFitHeight(60);
         playButton.setFitWidth(60);
 
@@ -71,6 +73,8 @@ public class InitialWindow extends Application {
             if (!playerName.isBlank()) {
                 int airports = numberOfAirports.getValue();
                 System.out.println("Iniciando el juego de " + playerName + ", con " + airports + " aeropuertos...");
+                stage.close();
+                this.controller.load(airports);
             } else {
                 Controller.showAlert("Por favor ingrese su nombre", "Completar campos",
                         Alert.AlertType.ERROR);
