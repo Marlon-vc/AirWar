@@ -2,12 +2,14 @@ package Logic;
 
 import Gui.GameWindow;
 import Sprites.Airport;
+import Sprites.Battery;
 import Sprites.Plane;
 import Structures.AdjacencyMatrix;
 import Structures.LinkedList;
 import javafx.application.Platform;
 import javafx.scene.control.Alert;
 import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
 import javafx.scene.layout.Pane;
 
 import java.time.Clock;
@@ -47,11 +49,20 @@ public class Controller {
             generateAirports(airportCount);
             this.airportRoutes = new AdjacencyMatrix(airportList);
             renderAirports(container);
+            createBattery(container);
             System.out.println("..done");
         });
 
         loadThread.setDaemon(true);
         loadThread.start();
+    }
+
+    private void createBattery(Pane container) {
+        Image turret = loadImage("res/images/turret2.png");
+        Battery b = new Battery(turret, 100, 100);
+        System.out.println("Se crea la bateria");
+        Platform.runLater(() -> container.getChildren().add(b.getImage()));
+
     }
 
     private void generateAirports(int count) {

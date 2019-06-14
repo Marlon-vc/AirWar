@@ -86,6 +86,8 @@ public class GameWindow extends Application {
 
     }
 
+
+
     public void show() {
         launch(GameWindow.class);
     }
