@@ -11,9 +11,7 @@ public class Battery extends Sprite {
     int Xmax;
     double speed;
 
-    public Battery(Image image) {
-        super(image);
-    }
+
 
     public Battery(Image image, double posX, double posY) {
         super(image, posX, posY);
