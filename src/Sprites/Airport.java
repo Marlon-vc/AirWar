@@ -5,24 +5,31 @@ import javafx.scene.control.Tooltip;
 import javafx.scene.effect.DropShadow;
 import javafx.scene.image.Image;
 import javafx.scene.paint.Color;
+import javafx.util.Duration;
 
 public class Airport extends Sprite {
 
     private int id;
     private double time;
     private Queue<Plane> planeQueue;
+    private Tooltip tooltip;
+    private boolean isCarrier;
 
-    public Airport(Image spriteImage, int id, double posX, double posY) {
-        super(spriteImage, posX, posY);
+
+    public Airport(int id, double posX, double posY) {
+        super(posX, posY);
         this.id = id;
         this.planeQueue = new Queue<>();
 
-        Tooltip tooltip = new Tooltip();
+        tooltip = new Tooltip();
         tooltip.setText("Airport " + id + "\nPos X: " + posX + "\nPos Y: " + posY);
+        tooltip.setShowDelay(Duration.ZERO);
+
         Tooltip.install(image, tooltip);
         image.setOnMouseEntered(mouseEvent -> image.setEffect(new DropShadow(5, Color.LIGHTGRAY)));
         image.setOnMouseExited(mouseEvent -> image.setEffect(null));
     }
+
 
     public void setTime(double time) {
         this.time = time;
@@ -40,4 +47,19 @@ public class Airport extends Sprite {
         planeQueue.enqueue(plane);
     }
 
+    public void setTextToTooltip(String text){
+        tooltip.setText(text);
+    }
+
+    public int getId() {
+        return id;
+    }
+
+    public boolean isCarrier() {
+        return isCarrier;
+    }
+
+    public void setCarrier(boolean carrier) {
+        isCarrier = carrier;
+    }
 }

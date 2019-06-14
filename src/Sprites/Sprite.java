@@ -9,6 +9,13 @@ public class Sprite {
     double posX;
     double posY;
 
+    Sprite(double posX, double posY) {
+        this.image = new ImageView();
+        this.posX = posX;
+        this.posY = posY;
+        updatePos();
+    }
+
     Sprite() {
         this.image = new ImageView();
         this.posX = 0;
