@@ -28,8 +28,8 @@ public class Airport extends Sprite {
         this.time = time;
     }
 
-    public double getTime() {
-        return this.time;
+    public boolean hasTimeLeft() {
+        return (time > 0);
     }
 
     public boolean isEmpty() {
