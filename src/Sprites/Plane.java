@@ -50,4 +50,7 @@ public class Plane extends Sprite {
         return (route.getSize() == 0);
     }
 
+    public Queue<Airport> getRoute() {
+        return route;
+    }
 }
