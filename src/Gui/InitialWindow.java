@@ -59,7 +59,7 @@ public class InitialWindow extends Application {
 
         Label airportsLabel = new Label("Ingrese la cantidad de aeropuertos");
         Spinner<Integer> numberOfAirports  =  new Spinner<>();
-        numberOfAirports.setValueFactory(new SpinnerValueFactory.IntegerSpinnerValueFactory(10, 40, 1));
+        numberOfAirports.setValueFactory(new SpinnerValueFactory.IntegerSpinnerValueFactory(10, 100, 1));
         numberOfAirports.setEditable(true);
         numberOfAirports.setPrefWidth(100);
         numberOfAirports.setMaxWidth(100);
