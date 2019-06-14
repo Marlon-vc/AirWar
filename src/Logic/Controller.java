@@ -221,6 +221,26 @@ public class Controller {
         }
         return listaRutas;
     }
+    /**
+     * Este metodo se encarga de escoger la ruta del avion, de tal manera que escoja un nuevo aereopuerto
+     * diferente al que se encuentra en ese momento
+     */
+    public void selectAirport(LinkedList<Airport> airports, Plane plane){
+        if (plane.isEnd()){
+            Random rn = new Random();
+            int index;
+            index = rn.nextInt(airports.getSize());
+            for (int i = 0; i < airports.getSize()-1;i++) {
+                if (airports.get(index).getPosX() == plane.getPosX() && airports.get(index).getPosY() == plane.getPosY()){
+                    index = rn.nextInt(airports.getSize());
+                }else{
+                    plane.getRoute().enqueue(airports.get(index));
+                    break;
+                }
+            }
+        }
+    }
+
 
     /**
      * Método que guarda la referencia de la interfaz principal en una variable de clase.
