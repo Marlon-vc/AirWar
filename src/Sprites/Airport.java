@@ -24,12 +24,20 @@ public class Airport extends Sprite {
         image.setOnMouseExited(mouseEvent -> image.setEffect(null));
     }
 
+    public int getId() {
+        return id;
+    }
+
     public void setTime(double time) {
         this.time = time;
     }
 
     public boolean hasTimeLeft() {
         return (time > 0);
+    }
+
+    public void decreaseTime(double time) {
+        this.time -= time;
     }
 
     public boolean isEmpty() {

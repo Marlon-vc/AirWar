@@ -22,21 +22,18 @@ import javafx.scene.image.Image;
 public class Plane extends Sprite {
 
     private double speed;
+    private boolean isVisible;
+    private boolean isOnAir;
     private Airport currentDestination;
     private Queue<Airport> route;
 
     private double m;
     private double b;
 
-    public Plane(Image avion, double posX, double posY, LinkedList<Ruta> ruta, int speed) {
-        super();
-        this.speed = 1;
-    }
-
     public Plane(Image planeImage, double posX, double posY) {
         super(planeImage, posX, posY);
         this.speed = 1;
-
+        this.isVisible = false;
     }
 
     public double getSpeed() {
@@ -53,5 +50,17 @@ public class Plane extends Sprite {
 
     public Queue<Airport> getRoute() {
         return route;
+    }
+
+    public void setRoute(Queue<Airport> route) {
+        this.route = route;
+    }
+
+    public boolean isVisible() {
+        return this.isVisible;
+    }
+
+    public void setVisibility(boolean visible) {
+        this.isVisible = visible;
     }
 }

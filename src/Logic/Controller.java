@@ -31,6 +31,7 @@ public class Controller {
     private Controller() {
         airportImage = loadImage("/res/images/airport2.png");
         planeImage = loadImage("/res/images/plane.png");
+        planesList = new LinkedList<>();
     }
 
     /**
@@ -104,20 +105,45 @@ public class Controller {
      * @param secs Tiempo transcurrido.
      */
     private void updateGame(double secs) {
-        //TODO actualizar el estado del juego
+        //Se cambia el estado de los aeropuertos
         for (int i=0; i<airportList.getSize(); i++) {
             Airport airport = airportList.get(i);
             if (airport.hasTimeLeft()) {
                 if (airport.isEmpty()) {
+//                    lauchNewPlane(airport);
+                    //Generate new plane
                     Plane plane = new Plane(planeImage, airport.getPosX(), airport.getPosY());
-                    //TODO inicializar el movimiento del avión.
+                    plane.setRoute(graph.shortestRoute(airport.getId(),
+                            graph.selectRandom(airport.getId()).getId()));
+
+                    planesList.add(plane);
+
+
                 } else {
                     //TODO lanzar el avión en espera
+                    lauchQueuePlane(airport);
                 }
             } else {
                 //TODO decrementar el tiempo restante.
+                airport.decreaseTime(secs);
             }
         }
+
+        //Se cambia el estado de los aviones
+        for (int i=0; i<planesList.getSize(); i++) {
+            Plane plane = planesList.get(i);
+
+        }
+    }
+
+    private void lauchNewPlane(Airport current) {
+        Plane plane = new Plane(planeImage, current.getPosX(), current.getPosY());
+
+
+    }
+
+    private void lauchQueuePlane(Airport current) {
+
     }
 
     /**
@@ -127,7 +153,13 @@ public class Controller {
     private void render(Pane gamePane) {
         //TODO renderizar los cambios en la interfaz.
         for (int i=0; i<planesList.getSize(); i++) {
-            planesList.get(i).updatePos();
+            Plane plane = planesList.get(i);
+            if (!plane.isVisible()) {
+                Platform.runLater(()->gamePane.getChildren().add(plane.getImage()));
+                plane.setVisibility(true);
+            }
+
+            Platform.runLater(plane::updatePos);
         }
     }
 
@@ -199,49 +231,6 @@ public class Controller {
         showID.showAndWait();
     }
 
-    public static LinkedList<Ruta> generateRuta(LinkedList<Airport> aeropuertos, int cantidad){
-        //cantidad es la variable para ver cuantos aeropuertos quiero
-        LinkedList<Ruta> listaRutas = new LinkedList<>();
-        Random rand = new Random();
-        Ruta nuevaRuta = new Ruta();
-
-        for(int i = 0; i < cantidad; i++){
-            int rand_int1 = rand.nextInt(aeropuertos.getSize());
-            int rand_int2 = rand.nextInt(aeropuertos.getSize());
-            if(rand_int1 != rand_int2) {
-                nuevaRuta.setX1(aeropuertos.get(rand_int1).getPosX());
-                nuevaRuta.setY1(aeropuertos.get(rand_int1).getPosY());
-                nuevaRuta.setX2(aeropuertos.get(rand_int2).getPosX());
-                nuevaRuta.setY2(aeropuertos.get(rand_int2).getPosY());
-                listaRutas.add(nuevaRuta);
-            }
-            else {
-                i--;
-            }
-        }
-        return listaRutas;
-    }
-    /**
-     * Este metodo se encarga de escoger la ruta del avion, de tal manera que escoja un nuevo aereopuerto
-     * diferente al que se encuentra en ese momento
-     */
-    public void selectAirport(LinkedList<Airport> airports, Plane plane){
-        if (plane.isEnd()){
-            Random rn = new Random();
-            int index;
-            index = rn.nextInt(airports.getSize());
-            for (int i = 0; i < airports.getSize()-1;i++) {
-                if (airports.get(index).getPosX() == plane.getPosX() && airports.get(index).getPosY() == plane.getPosY()){
-                    index = rn.nextInt(airports.getSize());
-                }else{
-                    plane.getRoute().enqueue(airports.get(index));
-                    break;
-                }
-            }
-        }
-    }
-
-
     /**
      * Método que guarda la referencia de la interfaz principal en una variable de clase.
      * @param gameWindow Interfaz principal.
@@ -249,16 +238,18 @@ public class Controller {
     public void setGameWindow(GameWindow gameWindow) {
         this.gameWindow = gameWindow;
     }
-    public void generatePlane(){
-        Random random = new Random();
-        int index = random.nextInt(airportList.getSize()-1);
-        // El valor de cantidad se debe asociar a la cantidad de aeropuertos que escoja el jugador
-        LinkedList<Ruta> ruta = generateRuta(airportList, 3);
-        //Verificar que imagen es la definitiva para los aviones y si se utilizan todas se puede implementar una lista para accesar aleatoriamente y escoger la imagen
-        Image avion = loadImage("res/images/plane3.png");
-        //Se utiliza speed = 1 para realizar las pruebas iniciales, mas adelante se puede implementar un valor distinto
-        new Plane(avion, airportList.get(index).getPosX(), airportList.get(index).getPosY(), ruta ,1);
-    }
+
+//    public void generatePlane(){
+//        Random random = new Random();
+//        int index = random.nextInt(airportList.getSize()-1);
+//        // El valor de cantidad se debe asociar a la cantidad de aeropuertos que escoja el jugador
+//        LinkedList<Ruta> ruta = generateRuta(airportList, 3);
+//        //Verificar que imagen es la definitiva para los aviones y si se utilizan todas se puede implementar una lista para accesar aleatoriamente y escoger la imagen
+//        Image avion = loadImage("res/images/plane3.png");
+//        //Se utiliza speed = 1 para realizar las pruebas iniciales, mas adelante se puede implementar un valor distinto
+//        new Plane(avion, airportList.get(index).getPosX(), airportList.get(index).getPosY(), ruta ,1);
+//    }
+
 
     public void randomTime(){
 //        Duration tickDuration = Duration.ofNanos(250000);
