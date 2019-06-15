@@ -12,6 +12,8 @@ public class AdjacencyMatrix {
     private LinkedList<Airport> airports;
     private double[][] matrix;
 
+
+
     public AdjacencyMatrix(LinkedList<Airport> nodes) {
         int size = nodes.getSize();
         this.airports = nodes;
@@ -51,16 +53,67 @@ public class AdjacencyMatrix {
             return -1;
         }
     }
+    public LinkedList<Airport> getBestPath(int id1, int id2, int[][] pathMatrix){
+        LinkedList<Integer> bestPathList = new LinkedList<Integer>();
+        while(id1 != id2){
+            bestPathList.add(id1);
+            id1 = pathMatrix[id1][id2];
+        }
+        bestPathList.add(id2);
+        return ConvertIdToAirports(bestPathList);
+    }
+    public LinkedList<Airport> ConvertIdToAirports(LinkedList<Integer> identificadores){
+        LinkedList<Airport> rutaAeropuertos = new LinkedList<>();
+        for(int i=0; i < identificadores.getSize(); i++){
+            for(int j=0; j < airports.getSize(); j++){
+                if(airports.get(j).getId() == identificadores.get(i)){
+                    rutaAeropuertos.add(airports.get(j));
+                    break;
+                }
+            }
+        }
+        return rutaAeropuertos;
+    }
+
 
     public LinkedList<Airport> shortestRoute(int id1, int id2) {
         LinkedList<Airport> route = new LinkedList<>();
+        int N = airports.getSize();
+        int[][] pathMatrix = new int[N][N];
+        LinkedList<Airport> airports = new LinkedList<Airport>();
+
+
         if ((id1 < airports.getSize()) && (id2 < airports.getSize()) && (id1 >= 0) && (id2 >= 0)) {
             //TODO calcular la ruta mas corta desde el aeropuerto 1 al aeropuerto 2.
+            pathMatrix = FloydAlgo(pathMatrix);
+            route = getBestPath(id1, id2, pathMatrix);
         } else {
             System.out.println("Invalid airports id");
         }
         return route;
     }
+
+    public int[][] FloydAlgo(int[][] pathMatrix) {
+        LinkedList<Airport> route = new LinkedList<>();
+        LinkedList<Airport> airports = new LinkedList<Airport>();
+
+
+        for (int k = 0; k < airports.getSize(); k++) {
+            for (int i = 0; i < airports.getSize(); i++) {
+                for (int j = 0; j < airports.getSize(); j++) {
+                    // to keep track.;
+                    if (this.matrix[i][k] + this.matrix[k][j] < this.matrix[i][j]) {
+                        this.matrix[i][j] = this.matrix[i][k] + this.matrix[k][j];
+                        pathMatrix[i][j] = k;
+                    }
+                }
+            }
+        }
+        return pathMatrix;
+
+    }
+
+
 
     public void show() {
         int size = airports.getSize();
