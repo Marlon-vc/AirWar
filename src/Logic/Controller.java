@@ -2,6 +2,7 @@ package Logic;
 
 import Gui.GameWindow;
 import Sprites.Airport;
+import Sprites.Battery;
 import Sprites.Plane;
 import Structures.AdjacencyMatrix;
 import Structures.LinkedList;
@@ -19,6 +20,7 @@ public class Controller {
     private GameWindow gameWindow;
     private LinkedList<Airport> airportList;
     private LinkedList<Plane> planesList;
+    private Battery battery;
     private AdjacencyMatrix graph;
 
     private Image airportImage;
@@ -54,6 +56,8 @@ public class Controller {
             System.out.println("Starting game thread..");
             startGameThread(gameWindow.getMainContainer());
             System.out.println("..done");
+            // Se genera la bateria que es donde se dispara a los aviones
+            generateBattery(gameWindow.getMainContainer().getMaxWidth(),gameWindow.getMainContainer() );
         });
 
         loadThread.setDaemon(true);
@@ -126,6 +130,8 @@ public class Controller {
         for (int i=0; i<planesList.getSize(); i++) {
             planesList.get(i).updatePos();
         }
+        battery.changePosition();
+
     }
 
     /**
@@ -228,6 +234,18 @@ public class Controller {
                 }
             }
         }
+    }
+
+    /**
+     * Este metodo genera una instancia de la bateria antiaerea
+     *
+     * @param size El valor size es un double que guarda el tamaño de la pantalla
+     * @param container es donde se agrega el objeto a la pantalla de juego
+     */
+    public void generateBattery(double size, Pane container){
+        Image turret = loadImage("res/images/turret2.png");
+        Battery battery = new Battery(turret, size);
+        Platform.runLater(() -> container.getChildren().add(battery.getImage()));
     }
 
 
