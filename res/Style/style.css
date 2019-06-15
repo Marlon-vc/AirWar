@@ -33,3 +33,13 @@ text-field {
     -fx-opacity: 0.7;
     -fx-background-insets: -4, -4;
 }
+
+#game-label {
+    -fx-text-fill: white;
+    -fx-font-size: 24;
+    -fx-text-alignment: center;
+}
+
+#game-container {
+    -fx-background-color: transparent;;
+}
