@@ -22,28 +22,34 @@ public class AdjacencyMatrix {
     }
 
     private void buildMatrix() {
+        System.out.println("Building adjacency matrix..");
         int size = airports.getSize();
+        boolean emptyRow;
 
         for (int i=0; i<size; i++) {
+            emptyRow = true;
             for (int j=0; j<size; j++) {
-                boolean createRoute = ThreadLocalRandom.current().nextBoolean();
-                if(createRoute && (i != j)) {
-//                    System.out.println("Creating connection between airport " + i + " to " + "airport " + j);
-                    Airport airportStart = airports.get(i);
-                    Airport airportEnd = airports.get(j);
-                    double weight = Math.sqrt(
-                            Math.pow(airportEnd.getPosX() - airportStart.getPosX(), 2) +
-                            Math.pow(airportEnd.getPosY() - airportStart.getPosY(), 2));
-//                    System.out.println("Route weight: " + weight);
-
-                    //Setting 2-ways route
-                    matrix[i][j] = weight;
-                    matrix[j][i] = weight;
+                boolean route = ThreadLocalRandom.current().nextBoolean();
+                if(route && (i != j)) {
+                    emptyRow = false;
+                    createRoute(i, j);
                 }
             }
-//            TODO verificar que todos los nodos tengan al menos una conexión con otro nodo.
+            if (emptyRow) {
+                createRoute(i, size-1);
+            }
         }
-        System.out.println("Done creating connections..");
+    }
+
+    private void createRoute(int i, int j) {
+        Airport airportStart = airports.get(i);
+        Airport airportEnd = airports.get(j);
+        double weight = Math.sqrt(
+                Math.pow(airportEnd.getPosX() - airportStart.getPosX(), 2) +
+                        Math.pow(airportEnd.getPosY() - airportStart.getPosY(), 2));
+
+        matrix[i][j] = weight;
+        matrix[j][i] = weight;
     }
 
     public double getRouteWeight(int start, int end) {
@@ -124,7 +130,7 @@ public class AdjacencyMatrix {
                 m[i][j] = (int) matrix[i][j];
             }
         }
-        for (int[] row: m) System.out.println(Arrays.toString(row) + "\n");
+        for (int[] row: m) System.out.println(Arrays.toString(row));
     }
 
     public static void main(String[] args) {
@@ -138,7 +144,7 @@ public class AdjacencyMatrix {
 
         for (int i=0; i<list.getSize(); i++) {
             for (int j=0; j<list.getSize(); j++) {
-                System.out.println("Route weight between " + i + " and " + j + ": " + matrix.getRouteWeight(i, j));
+//                System.out.println("Route weight between " + i + " and " + j + ": " + matrix.getRouteWeight(i, j));
             }
         }
         matrix.show();
