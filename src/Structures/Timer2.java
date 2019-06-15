@@ -34,6 +34,7 @@ public class Timer {
         timerText.setFont(Font.font(null, FontWeight.BOLD, fontSize));
         timerPane.getChildren().add(timerText);
         timerPane.setAlignment(Pos.CENTER);
+        timerText.setStyle("-fx-text-fill: white");
     }
 
     /**
@@ -65,6 +66,7 @@ public class Timer {
                         @Override
                         public void run() {
                             timerText.setText(Integer.toString(internalTime));
+                            timerText.setStyle("-fx-text-fill: white");
                         }
                     });
                     Thread.sleep(1000);
@@ -88,6 +90,7 @@ public class Timer {
             worker.interrupt();
         }
         timerText.setText(Integer.toString(time));
+
         isRunning = false;
     }
 
