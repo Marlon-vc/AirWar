@@ -7,7 +7,6 @@ import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
-import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
@@ -74,7 +73,7 @@ public class InitialWindow extends Application {
                 int airports = numberOfAirports.getValue();
                 System.out.println("Iniciando el juego de " + playerName + ", con " + airports + " aeropuertos...");
                 stage.close();
-                this.controller.load(airports);
+                this.controller.load(airports, playerName);
             } else {
                 Controller.showAlert("Por favor ingrese su nombre", "Completar campos",
                         Alert.AlertType.ERROR);
