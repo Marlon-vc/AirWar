@@ -22,11 +22,19 @@ public class Battery extends Sprite {
         super(image, 10, 100);
         this.screenSize = screenSize;
     }
-    public void variateSpeed(){
+
+    /**
+     * El metodo crea un valor random entre 0 y 1 de tal modo que la velocidad es igual a su multiplicacion por ese valor random
+     */
+    private void variateSpeed(){
         Random random = new Random();
         int factor = random.nextInt(1);
         speed = speed*factor;
     }
+
+    /**
+     * Este metodo se encarga de variar la posicion del objeto segun el valor de velocidad
+     */
     public void changePosition(){
         direction = true;
         variateSpeed();
@@ -46,5 +54,16 @@ public class Battery extends Sprite {
                 this.posX = this.posX - speed;
             }
         }
+    }
+
+    /**
+     * Este metodo sera el encargado de realizar el disparo
+     * Se guarda la posicion x,y en el momento en el que se llama el metodo
+     * ********************Falta agregar funcionalidad*******************************
+     */
+    public void shoot(){
+        double x = this.getPosX();
+        double y = this.getPosY();
+
     }
 }
