@@ -28,6 +28,8 @@ public class Controller {
     private Image planeImage;
     private boolean isGameRunning;
 
+    private String playerName;
+
     private AdjacencyMatrix airportRoutes;
     private ColorUtils colorUtils = new ColorUtils();
 
@@ -36,6 +38,7 @@ public class Controller {
         airportImage = loadImage("/res/images/airport2.png");
         planeImage = loadImage("/res/images/plane.png");
         planesList = new LinkedList<>();
+        playerName = "";
     }
 
     /**
@@ -53,7 +56,8 @@ public class Controller {
      * Método que inicializa los componentes del juego.
      * @param airportCount Cantidad de aeropuertos a generar.
      */
-    public void load(int airportCount) {
+    public void load(int airportCount, String playerName) {
+        this.playerName = playerName;
         GameWindow.show();
         Thread loadThread = new Thread(() -> {
             generateAirports(airportCount);
@@ -167,19 +171,21 @@ public class Controller {
                 airport.setImage(Controller.loadImage("/res/images/aircraft-carrier.png"));
                 airport.setSize(35);
                 airport.setCarrier(true);
-                System.out.println("Color of airport :" + airport.getId() + " " +colorInt);
-                System.out.println("Adding carrier.. \n");
+//                System.out.println("Color of airport :" + airport.getId() + " " +colorInt);
+//                System.out.println("Adding carrier.. \n");
             } else {
                 airport.setImage(Controller.loadImage("/res/images/airport2.png"));
                 airport.setSize(25);
                 airport.setCarrier(false);
-                System.out.println("Color of airport :" + airport.getId() + " " +colorInt);
-                System.out.println("Adding airport.. \n");
+//                System.out.println("Color of airport :" + airport.getId() + " " +colorInt);
+//                System.out.println("Adding airport.. \n");
             }
 
             airportList.add(airport);
 
         }
+
+        System.out.println(playerName);
 
     }
 
@@ -312,5 +318,13 @@ public class Controller {
      */
     public void setGameWindow(GameWindow gameWindow) {
         this.gameWindow = gameWindow;
+    }
+
+    public String getPlayerName() {
+        return playerName;
+    }
+
+    public void setPlayerName(String playerName) {
+        this.playerName = playerName;
     }
 }
