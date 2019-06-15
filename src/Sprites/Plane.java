@@ -41,14 +41,18 @@ public class Plane extends Sprite {
     public Plane(Image planeImage, double posX, double posY) {
         super(planeImage, posX, posY);
         this.speed = 1;
-
     }
 
 
     private void init() {
+        int currentIdAirport = currentDestination.getId();
         tooltip = new Tooltip();
-        tooltip.setText("");
-        //TODO colocar siguiente aeropuerto, destinos por recorrer, velocidad
+        tooltip.setText("Next destination: Airport " + currentIdAirport + "\n" +
+                "Destinations to travel: " + "\n" +
+                "Speed of airplane: " + this.speed);
+
+        //TODO colocar destinos por recorrer
+
         tooltip.setShowDelay(Duration.ZERO);
 
         Tooltip.install(image, tooltip);
