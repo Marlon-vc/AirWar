@@ -84,6 +84,10 @@ public class Battery extends Sprite {
         this.getImage().setY(this.getPosY());
     }
 
+<<<<<<< HEAD
+=======
+
+>>>>>>> b45de6faac563a9b92b04f2c2babfcbc2c0afcad
     public static void main(String[] args) {
 
         Battery b = new Battery(100,100);

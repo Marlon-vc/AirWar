@@ -153,6 +153,7 @@ public class Controller {
 
     private void moveMissile(Pane gamePane) {
         //TODO mover proyectil
+
         Image image = new Image("file://" + System.getProperty("user.dir") + "/res/images/plane.png", 25, 25, false, false);
         Plane plane = new Plane(image, 589, 200);
 
@@ -203,7 +204,6 @@ public class Controller {
         System.out.println("sleep " + rand);
 
         int i = 0;
-
         while (isGameRunning){
             if (right) {
                 i += 5;
