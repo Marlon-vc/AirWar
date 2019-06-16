@@ -33,6 +33,7 @@ public class Controller {
     private String playerName;
     private AdjacencyMatrix airportRoutes;
     private int planeShotDown;
+    private boolean right;
 
 
     private Controller() {
@@ -162,6 +163,10 @@ public class Controller {
 
             //TODO check if plane is arriving to an airport
         }
+
+        this.right = true;
+        moveBattery();
+        System.out.println("Done moving");
     }
 
     public Pane getMainPane() {
@@ -231,11 +236,44 @@ public class Controller {
                     explosion.setFitWidth(25);
                     gamePane.getChildren().add(explosion);
                 });
-
             }
         }
     }
 
+    private void moveBattery() {
+        int leftL=0;
+        int rightL = 1230;
+        int rand = ThreadLocalRandom.current().nextInt(15, 75);
+        System.out.println("sleep " + rand);
+
+        int i = 0;
+
+        while (isGameRunning){
+            if (right) {
+                i += 5;
+
+            } else {
+                i -= 5;
+            }
+            try {
+                Thread.sleep(rand);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+            int finalI = i;
+            Platform.runLater(()-> battery.getImage().setX(finalI));
+
+            if (i == rightL) {
+                right = false;
+                rand = ThreadLocalRandom.current().nextInt(5, 60);
+                System.out.println("Sleep: " + rand);
+            } else if (i == leftL) {
+                right = true;
+                rand = ThreadLocalRandom.current().nextInt(5, 60);
+                System.out.println("Sleep: " + rand);
+            }
+        }
+    }
 
     private boolean checkCollision(double posY, double posX) {
         posX+=5;
