@@ -29,7 +29,6 @@ public class Controller {
     private boolean isGameRunning;
     private String playerName;
     private AdjacencyMatrix airportRoutes;
-    private ColorUtils colorUtils = new ColorUtils();
     private int planeShotDown;
 
 
@@ -321,48 +320,6 @@ public class Controller {
         showID.setHeaderText(null);
         showID.setContentText(message);
         showID.showAndWait();
-    }
-
-    public static LinkedList<Ruta> generateRuta(LinkedList<Airport> aeropuertos, int cantidad){
-        //cantidad es la variable para ver cuantos aeropuertos quiero
-        LinkedList<Ruta> listaRutas = new LinkedList<>();
-        Random rand = new Random();
-        Ruta nuevaRuta = new Ruta();
-
-        for(int i = 0; i < cantidad; i++){
-            int rand_int1 = rand.nextInt(aeropuertos.getSize());
-            int rand_int2 = rand.nextInt(aeropuertos.getSize());
-            if(rand_int1 != rand_int2) {
-                nuevaRuta.setX1(aeropuertos.get(rand_int1).getPosX());
-                nuevaRuta.setY1(aeropuertos.get(rand_int1).getPosY());
-                nuevaRuta.setX2(aeropuertos.get(rand_int2).getPosX());
-                nuevaRuta.setY2(aeropuertos.get(rand_int2).getPosY());
-                listaRutas.add(nuevaRuta);
-            }
-            else {
-                i--;
-            }
-        }
-        return listaRutas;
-    }
-    /**
-     * Este metodo se encarga de escoger la ruta del avion, de tal manera que escoja un nuevo aereopuerto
-     * diferente al que se encuentra en ese momento
-     */
-    public void selectAirport(LinkedList<Airport> airports, Plane plane){
-        if (plane.isEnd()){
-            Random rn = new Random();
-            int index;
-            index = rn.nextInt(airports.getSize());
-            for (int i = 0; i < airports.getSize()-1;i++) {
-                if (airports.get(index).getPosX() == plane.getPosX() && airports.get(index).getPosY() == plane.getPosY()){
-                    index = rn.nextInt(airports.getSize());
-                }else{
-                    plane.getRoute().enqueue(airports.get(index));
-                    break;
-                }
-            }
-        }
     }
 
     /**
