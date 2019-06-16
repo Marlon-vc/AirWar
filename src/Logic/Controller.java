@@ -67,7 +67,7 @@ public class Controller {
             startGameThread(gameWindow.getMainContainer());
             System.out.println("..done");
             // Se genera la bateria que es donde se dispara a los aviones
-            generateBattery(gameWindow.getMainContainer().getMaxWidth(),gameWindow.getMainContainer() );
+            generateBattery(gameWindow.getMainContainer());
         });
 
         loadThread.setDaemon(true);
@@ -300,13 +300,11 @@ public class Controller {
 
     /**
      * Este metodo genera una instancia de la bateria antiaerea
-     *
-     * @param size El valor size es un double que guarda el tamaño de la pantalla
      * @param container es donde se agrega el objeto a la pantalla de juego
      */
-    public void generateBattery(double size, Pane container){
+    public void generateBattery(Pane container){
         Image turret = loadImage("res/images/turret2.png");
-        Battery battery = new Battery(turret, size);
+        Battery battery = new Battery(turret);
         Platform.runLater(() -> container.getChildren().add(battery.getImage()));
     }
 

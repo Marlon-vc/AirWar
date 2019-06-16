@@ -8,19 +8,20 @@ import java.util.Random;
 public class Battery extends Sprite {
 
     double speed = 1;
-    int Xmin = 10;
+    int Xmin;
     boolean direction;
-    double screenSize;
+    double Xmax;
 
 
     public Battery() {
     }
 
-    public Battery(Image image, double screenSize) {
+    public Battery(Image image) {
         //La posicion en y no deberia cambiar por lo tanto se mantiene fijo
         //La posicion en x se inicializa en 10 de modo que el objeto inicia en esta posicion de la pantalla
         super(image, 10, 100);
-        this.screenSize = screenSize;
+        this.Xmin = 10;
+        this.Xmax = 1270;
     }
 
     /**
@@ -40,14 +41,14 @@ public class Battery extends Sprite {
         variateSpeed();
 
         if (direction) {
-            if (this.posX + speed > this.screenSize) {
+            if (this.posX + speed > this.Xmax) {
                 direction = false;
                 this.posX = this.posX - speed;
             }else{
                 this.posX = this.posX + speed;
             }
         }else{
-            if (this.posX + speed < 10) {
+            if (this.posX + speed < this.Xmin) {
                 direction = true;
                 this.posX = this.posX + speed;
             }else{
