@@ -518,6 +518,7 @@ public class Controller {
         this.playerName = playerName;
     }
 
+
     public double getWeight(int idStart, int idEnd) {
         return graph.getRouteWeight(idStart, idEnd);
     }
@@ -528,5 +529,13 @@ public class Controller {
 
     public String getKey() {
         return inputHandler.getShootKey();
+    }
+
+    public int getPlanesDestroyed() {
+        return planesDestroyed;
+    }
+
+    public void setPlanesDestroyed(int planesDestroyed) {
+        this.planesDestroyed = planesDestroyed;
     }
 }
