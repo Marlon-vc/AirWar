@@ -5,14 +5,18 @@ import Sprites.Airport;
 import Sprites.Battery;
 import Sprites.Missile;
 import Sprites.Plane;
+import Sprites.Sprite;
 import Structures.AdjacencyMatrix;
 import Structures.LinkedList;
 import Structures.Queue;
 import javafx.application.Platform;
+import javafx.geometry.Pos;
 import javafx.scene.control.Alert;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.image.PixelReader;
+import javafx.scene.layout.BorderPane;
+import javafx.scene.layout.HBox;
 import javafx.scene.layout.Pane;
 import java.util.concurrent.ThreadLocalRandom;
 
@@ -180,8 +184,6 @@ public class Controller {
                 }
                 plane.updatePos();
             }
-
-            moveMissile(gamePane);
         }
     }
 
@@ -244,14 +246,6 @@ public class Controller {
             }
         }
         return false;
-    }
-
-    private void createBattery(Pane container) {
-        Image turret = loadImage("res/images/turret2.png");
-        Battery b = new Battery(turret, 100, 100);
-        System.out.println("Se crea la bateria");
-        Platform.runLater(() -> container.getChildren().add(b.getImage()));
-
     }
 
     /**
@@ -377,9 +371,17 @@ public class Controller {
      */
     public void generateBattery(Pane container){
         Image turret = loadImage("/res/images/turret2.png");
-        battery = new Battery(turret);
         Platform.runLater(() -> container.getChildren().add(battery.getImage()));
+        battery = new Battery(turret, 10,600);
+        battery.setImage(turret);
+        battery.setSize(50);
+        BorderPane.setAlignment(battery.getImage(), Pos.CENTER);
+        Platform.runLater(() -> {
+            container.getChildren().add(battery.getImage());
+        });
+
     }
+
 
     /**
      * Método que guarda la referencia de la interfaz principal en una variable de clase.
