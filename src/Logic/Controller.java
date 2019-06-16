@@ -5,6 +5,7 @@ import Sprites.Airport;
 import Sprites.Plane;
 import Structures.AdjacencyMatrix;
 import Structures.LinkedList;
+import Structures.Queue;
 import javafx.application.Platform;
 import javafx.scene.control.Alert;
 import javafx.scene.image.Image;
@@ -156,11 +157,6 @@ public class Controller {
             PixelReader pixelReader = gameWindow.getPixelReader();
 
             int colorInt = pixelReader.getArgb((int) airport.getPosX(), (int) airport.getPosY());
-            int red = (colorInt >> 16) & 0xff;
-            int green = (colorInt >> 8) & 0xff;
-            int blue = colorInt & 0xff;
-
-
             if (colorInt == -14996115){
                 airport.setImage(Controller.loadImage("/res/images/aircraft-carrier.png"));
                 airport.setSize(35);
@@ -174,13 +170,24 @@ public class Controller {
 //                System.out.println("Color of airport :" + airport.getId() + " " +colorInt);
 //                System.out.println("Adding airport.. \n");
             }
-
             airportList.add(airport);
-
         }
 
-        System.out.println(playerName);
+        testPlane();
+    }
 
+    private void testPlane() {
+        Image image = new Image("file://" + System.getProperty("user.dir") +"/res/images/plane.png", 25, 25, false, false);
+        Plane plane = new Plane(image, 10, 10);
+        Queue<Airport> route = new Queue<>();
+        for (int i=0; i<4; i++){
+            route.enqueue(airportList.get(i));
+        }
+
+        plane.setRoute(route);
+        System.out.println(plane.getRoute().getSize());
+
+        Platform.runLater(()->getGameWindow().getChildren().add(plane.getImage()));
     }
 
     public void moveAirport(){
@@ -300,6 +307,10 @@ public class Controller {
      */
     public void setGameWindow(GameWindow gameWindow) {
         this.gameWindow = gameWindow;
+    }
+
+    public Pane getGameWindow() {
+        return gameWindow.getMainContainer();
     }
 
     public String getPlayerName() {
