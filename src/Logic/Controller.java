@@ -383,11 +383,6 @@ public class Controller {
         });
 
     }
-    public void renderBattery(){
-        battery.changePosition();
-    }
-
-
 
     /**
      * Método que guarda la referencia de la interfaz principal en una variable de clase.
