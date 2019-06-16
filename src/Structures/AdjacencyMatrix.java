@@ -1,23 +1,20 @@
 package Structures;
 
-import Logic.Controller;
 import Sprites.Airport;
-import Sprites.Plane;
-import javafx.scene.image.Image;
-import javafx.scene.image.ImageView;
 
 import java.util.Arrays;
-import java.util.Random;
 import java.util.concurrent.ThreadLocalRandom;
 
 public class AdjacencyMatrix {
     private LinkedList<Airport> airports;
-    private Weight[][] matrix;
+    private Weight[][] distancesMatrix;
+    private int[][] routesMatrix;
+
 
     public AdjacencyMatrix(LinkedList<Airport> nodes) {
         int size = nodes.getSize();
         this.airports = nodes;
-        this.matrix = new Weight[size][size];
+        this.distancesMatrix = new Weight[size][size];
         buildMatrix();
     }
 
@@ -49,16 +46,18 @@ public class AdjacencyMatrix {
                         Math.pow(airportEnd.getPosY() - airportStart.getPosY(), 2));
 
         Weight routeWeight = new Weight(weight);
-        matrix[i][j] = routeWeight;
-        matrix[j][i] = routeWeight;
+        distancesMatrix[i][j] = routeWeight;
+        distancesMatrix[j][i] = routeWeight;
     }
 
     public double getRouteWeight(int start, int end) {
-        if (matrix[start][end].getRouteWeight() != 0.0) {
-            return matrix[start][end].getRouteWeight();
-        } else {
-            return -1;
+        //TODO eliminar verificación si es null
+        if (distancesMatrix[start][end] != null) {
+            if (distancesMatrix[start][end].getRouteWeight() != 0.0) {
+                return distancesMatrix[start][end].getRouteWeight();
+            }
         }
+        return -1;
     }
 
     public Queue<Airport> shortestRoute(int id1, int id2) {
@@ -91,39 +90,16 @@ public class AdjacencyMatrix {
         StringBuilder builder = new StringBuilder();
         int size = airports.getSize();
 
-        for (Weight[] row: matrix) {
-            builder.append(Arrays.toString(row));
+        for (Weight[] row: distancesMatrix) {
+            builder.append(Arrays.toString(row)).append("\n");
         }
         return builder.toString();
-    }
-
-    public static void main(String[] args) {
-        LinkedList<Airport> list = new LinkedList<>();
-        for (int i=0; i<5; i++) {
-            list.add(new Airport(
-                    null, i, i*13, i*13+1));
-        }
-
-        AdjacencyMatrix matrix = new AdjacencyMatrix(list);
-
-        for (int i=0; i<list.getSize(); i++) {
-            for (int j=0; j<list.getSize(); j++) {
-//                System.out.println("Route weight between " + i + " and " + j + ": " + matrix.getRouteWeight(i, j));
-            }
-        }
-        System.out.println(matrix);
-
     }
 }
 
 class Weight {
     private double routeWeight;
     private double routeDanger;
-
-    public Weight() {
-        this.routeWeight = 0;
-        this.routeDanger = 0;
-    }
 
     Weight(double routeWeight) {
         this.routeWeight = routeWeight;
