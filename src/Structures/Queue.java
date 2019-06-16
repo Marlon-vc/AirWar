@@ -32,6 +32,18 @@ public class Queue<T> {
         return this.size;
     }
 
+    public T get(int i) {
+        Node<T> temp = this.front.getNext();
+        for (int j=0; j<this.size; j++){
+            if (i == j){
+                return temp.getValue();
+            }
+            temp = temp.getNext();
+        }
+
+        return null;
+    }
+
     @Override
     public String toString() {
         StringBuilder builder = new StringBuilder("<-[");
@@ -55,22 +67,25 @@ public class Queue<T> {
         queue.enqueue(7);
         queue.enqueue(21);
 
-        System.out.println(queue);
+        System.out.println(queue.get(10));
 
-        System.out.println(queue.dequeue());
 
-        System.out.println(queue);
-        System.out.println(queue.dequeue());
-
-        System.out.println(queue);
-        System.out.println(queue.dequeue());
-
-        System.out.println(queue);
-        System.out.println(queue.dequeue());
-
-        System.out.println(queue);
-
-        System.out.println(queue.dequeue());
+//        System.out.println(queue);
+//
+//        System.out.println(queue.dequeue());
+//
+//        System.out.println(queue);
+//        System.out.println(queue.dequeue());
+//
+//        System.out.println(queue);
+//        System.out.println(queue.dequeue());
+//
+//        System.out.println(queue);
+//        System.out.println(queue.dequeue());
+//
+//        System.out.println(queue);
+//
+//        System.out.println(queue.dequeue());
 
     }
 }
