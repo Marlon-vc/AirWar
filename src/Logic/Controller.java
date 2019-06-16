@@ -382,7 +382,6 @@ public class Controller {
 
     }
 
-
     /**
      * Método que guarda la referencia de la interfaz principal en una variable de clase.
      * @param gameWindow Interfaz principal.
