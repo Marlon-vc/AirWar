@@ -193,7 +193,6 @@ public class Controller {
 
         Image image = new Image("file://" + System.getProperty("user.dir") +"/res/images/plane.png", 25, 25, false, false);
         Plane plane = new Plane(image, 589, 200);
-
         planesList.add(plane);
 
         Platform.runLater(()->gamePane.getChildren().add(plane.getImage()));
@@ -232,6 +231,7 @@ public class Controller {
             }
         }
     }
+
 
     private boolean checkCollision(double posY, double posX) {
         posX+=5;
