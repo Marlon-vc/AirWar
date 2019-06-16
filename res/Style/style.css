@@ -34,6 +34,12 @@ text-field {
     -fx-background-insets: -4, -4;
 }
 
+#label-game {
+    -fx-font-size: 20px;
+    -fx-text-fill: white;
+    -fx-text-alignment: center;
+}
+
 #game-label {
     -fx-text-fill: white;
     -fx-font-size: 24;
