@@ -32,6 +32,10 @@ public class Airport extends Sprite {
         this.time = time;
     }
 
+    public double getTimeLeft() {
+        return this.time;
+    }
+
     public boolean hasTimeLeft() {
         return (time > 0);
     }
@@ -46,6 +50,10 @@ public class Airport extends Sprite {
 
     public void addPlane(Plane plane) {
         planeQueue.enqueue(plane);
+    }
+
+    public Plane getNextPlane() {
+        return planeQueue.dequeue();
     }
 
 }
