@@ -194,9 +194,9 @@ public class Controller {
     private void moveMissile(Pane gamePane) {
         //TODO mover proyectil
 
-
         Image image = new Image("file://" + System.getProperty("user.dir") +"/res/images/plane.png", 25, 25, false, false);
         Plane plane = new Plane(image, 589, 200);
+
         planesList.add(plane);
 
         Platform.runLater(()->gamePane.getChildren().add(plane.getImage()));
