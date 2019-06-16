@@ -1,7 +1,6 @@
 package Gui;
 
 import Logic.Controller;
-
 import Logic.InputHandler;
 import Structures.Timer;
 import javafx.application.Application;
@@ -67,6 +66,7 @@ public class GameWindow extends Application {
         Label statisticsLabel = new Label("Estadística");
         statisticsLabel.setAlignment(Pos.TOP_LEFT);
         Label PlanesKilled = new Label("Aviones: " + this.controller.getPlanesDestroyed());
+
         PlanesKilled.setAlignment(Pos.CENTER);
         statisticsBox.getChildren().addAll(statisticsLabel,PlanesKilled);
 
