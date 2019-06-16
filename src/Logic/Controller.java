@@ -70,7 +70,6 @@ public class Controller {
             generateBattery(gameWindow.getMainContainer().getMaxWidth(),gameWindow.getMainContainer() );
         });
 
-
         loadThread.setDaemon(true);
         loadThread.start();
     }
@@ -150,6 +149,8 @@ public class Controller {
      * @param count Cantidad de aeropuertos a generar.
      */
     private void generateAirports(int count) {
+
+        System.out.println("Generating airports..");
         airportList = new LinkedList<>();
 
         for (int i=0; i<count; i++) {
@@ -182,7 +183,6 @@ public class Controller {
             }
 
             airportList.add(airport);
-
         }
 
         System.out.println(playerName);
@@ -226,7 +226,6 @@ public class Controller {
             Platform.runLater(() -> container.getChildren().add(airportList.get(finalI).getImage()));
         }
     }
-
 
     /**
      * Método encargado de cargar una imagen desde la ruta especificada.
