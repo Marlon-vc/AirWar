@@ -190,7 +190,6 @@ public class Controller {
                 plane.updatePos();
             }
         }
-
         for (int i=0; i<planesList.getSize(); i++) {
             planesList.get(i).updatePos();
         }
