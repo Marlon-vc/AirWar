@@ -66,13 +66,13 @@ public class Controller {
         GameWindow.show();
         Thread loadThread = new Thread(() -> {
             generateAirports(airportCount);
+            // Se genera la bateria que es donde se dispara a los aviones
+            generateBattery(gameWindow.getMainContainer());
             this.graph = new AdjacencyMatrix(airportList);
             renderAirports(gameWindow.getMainContainer());
             System.out.println("Starting game thread..");
             startGameThread(gameWindow.getMainContainer());
             System.out.println("..done");
-            // Se genera la bateria que es donde se dispara a los aviones
-            generateBattery(gameWindow.getMainContainer());
         });
 
         loadThread.setDaemon(true);
@@ -146,11 +146,33 @@ public class Controller {
         for (int i=0; i<planesList.getSize(); i++) {
             planesList.get(i).updatePos();
         }
-        battery.changePosition();
+//        Platform.runLater(()-> battery.changePosition());
+
+        moveBattery();
 
 
 
 
+
+    }
+
+    private void moveBattery() {
+        int i=0;
+        while (i<1280){
+            int rand = (int) ThreadLocalRandom.current().nextDouble(1, 5);
+            i+= rand;
+            int finalI = i;
+            Platform.runLater(()-> battery.getImage().setX(finalI));
+        }
+
+        while (i>0){
+            int rand = (int) ThreadLocalRandom.current().nextDouble(1, 5);
+            i-= rand;
+            int finalI = i;
+            Platform.runLater(()-> battery.getImage().setX(finalI));
+        }
+
+        moveBattery();
 
 
     }
