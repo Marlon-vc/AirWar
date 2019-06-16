@@ -185,6 +185,10 @@ public class Controller {
                 plane.updatePos();
             }
         }
+
+        for (int i=0; i<planesList.getSize(); i++) {
+            planesList.get(i).updatePos();
+        }
     }
 
     private void moveMissile(Pane gamePane) {
@@ -373,14 +377,14 @@ public class Controller {
         Image turret = loadImage("/res/images/turret2.png");
         Platform.runLater(() -> container.getChildren().add(battery.getImage()));
         battery = new Battery(turret, 10,600);
-        battery.setImage(turret);
         battery.setSize(50);
         BorderPane.setAlignment(battery.getImage(), Pos.CENTER);
         Platform.runLater(() -> {
             container.getChildren().add(battery.getImage());
         });
-
     }
+
+
 
     /**
      * Método que guarda la referencia de la interfaz principal en una variable de clase.

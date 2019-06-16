@@ -88,21 +88,6 @@ public class Battery extends Sprite {
 
     }
 
-    @Override
-    public void updatePos() {
-        this.getImage().setX(this.getPosX());
-        this.getImage().setY(this.getPosY());
-    }
-
-    public static Image loadImage(String relativePath) {
-        try {
-            return new Image("file://" +
-                    (System.getProperty("user.dir") + relativePath).replaceAll(" ", "%20"));
-        } catch (IllegalArgumentException e) {
-            System.out.println("Couln't load " + relativePath);
-        }
-        return null;
-    }
     public static void main(String[] args) {
 
         Battery b = new Battery(100,100);
