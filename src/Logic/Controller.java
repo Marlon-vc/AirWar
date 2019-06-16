@@ -199,17 +199,19 @@ public class Controller {
         //TODO mover proyectil
 
         Image image = new Image("file://" + System.getProperty("user.dir") +"/res/images/plane.png", 25, 25, false, false);
+
         Plane plane = new Plane(image, 589, 200);
 
         planesList.add(plane);
 
-        Platform.runLater(()->gamePane.getChildren().add(plane.getImage()));
+
+        Platform.runLater(() -> gamePane.getChildren().add(plane.getImage()));
 
         Image missileImage = loadImage("/res/images/missile1.png");
         Missile missile = new Missile(missileImage, 600, 700);
         missile.setSize(10);
-        Platform.runLater(()->gamePane.getChildren().add(missile.getImage()));
-        for (int i=700; i>0; i-=5){
+        Platform.runLater(() -> gamePane.getChildren().add(missile.getImage()));
+        for (int i = 700; i > 0; i -= 5) {
             double posY = missile.getPosY();
 
             //TODO verificar si hay algun avion en la posicion del misil
@@ -225,7 +227,7 @@ public class Controller {
                 missile.reduceY();
             } else {
                 this.planeShotDown++;
-                Platform.runLater(()-> {
+                Platform.runLater(() -> {
                     gamePane.getChildren().remove(missile.getImage());
                     gamePane.getChildren().remove(plane.getImage());
                     ImageView explosion = new ImageView(loadImage("/res/images/explosion.png"));
@@ -271,9 +273,9 @@ public class Controller {
                 rand = ThreadLocalRandom.current().nextInt(5, 60);
                 System.out.println("Sleep: " + rand);
             }
+
         }
     }
-
     private boolean checkCollision(double posY, double posX) {
         posX+=5;
         //TODO verificar que el avion esta en el aire
