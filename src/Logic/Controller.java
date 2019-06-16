@@ -34,6 +34,7 @@ public class Controller {
     private boolean isGameRunning;
 
     private String playerName;
+    int PlanesKilled = 0;
 
     private AdjacencyMatrix airportRoutes;
     private ColorUtils colorUtils = new ColorUtils();
@@ -361,5 +362,16 @@ public class Controller {
 
     public void setPlayerName(String playerName) {
         this.playerName = playerName;
+    }
+
+    public int getPlanesKilled() {
+        return PlanesKilled;
+    }
+
+    /**
+     * Este metodo al ser llamado incrementa el numero de aviones que el usuario ha destruido
+     */
+    public void addPlanesKilled() {
+        PlanesKilled ++;
     }
 }
