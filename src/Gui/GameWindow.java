@@ -1,7 +1,6 @@
 package Gui;
 
 import Logic.Controller;
-
 import Logic.InputHandler;
 import Structures.Timer;
 import javafx.application.Application;
@@ -15,6 +14,7 @@ import javafx.scene.image.PixelReader;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Pane;
+import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
 
 public class GameWindow extends Application {
@@ -57,13 +57,36 @@ public class GameWindow extends Application {
 
         timerBox.getChildren().addAll(playerName, timerLabel);
 
+        //Statistics
+        VBox statisticsBox = new VBox();
+        statisticsBox.setAlignment(Pos.TOP_RIGHT);
+        statisticsBox.setSpacing(10);
+        statisticsBox.setPadding(new Insets(10));
+
+        Label statisticsLabel = new Label("Estadística");
+        statisticsLabel.setAlignment(Pos.TOP_LEFT);
+        Label PlanesKilled = new Label("Aviones: " + this.controller.getPlanesKilled());
+        PlanesKilled.setAlignment(Pos.CENTER);
+        statisticsBox.getChildren().addAll(statisticsLabel,PlanesKilled);
+
+        HBox dataContainer = new HBox();
+        dataContainer.setSpacing(50);
+        dataContainer.setAlignment(Pos.TOP_CENTER);
+        dataContainer.setPadding(new Insets(10));
+        dataContainer.getChildren().addAll(timerBox,statisticsBox);
+
         //colocar estilo
         timerLabel.setId("game-label");
         playerName.setId("game-label");
         timerBox.setId("game-container");
 
+        statisticsLabel.setId("statistics-title");
+        PlanesKilled.setId("statistics-label");
+
+
         mainLayout.getChildren().addAll(mapIV);
-        mainLayout.setTop(timerBox);
+        mainLayout.setTop(dataContainer);
+
 
         Scene scene = new Scene(mainLayout, 1280, 720);
         stage.setResizable(false);

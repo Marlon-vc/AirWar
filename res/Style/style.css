@@ -34,12 +34,6 @@ text-field {
     -fx-background-insets: -4, -4;
 }
 
-#label-game {
-    -fx-font-size: 20px;
-    -fx-text-fill: white;
-    -fx-text-alignment: center;
-}
-
 #game-label {
     -fx-text-fill: white;
     -fx-font-size: 24;
@@ -48,4 +42,15 @@ text-field {
 
 #game-container {
     -fx-background-color: transparent;;
+}
+
+#statistics-title {
+    -fx-text-fill: white;
+    -fx-font-size: 20;
+    -fx-text-alignment: left;
+}
+#statistics-label {
+    -fx-text-fill: #22ee01;
+    -fx-font-size: 17;
+    -fx-text-alignment: center;
 }
