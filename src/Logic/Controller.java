@@ -399,8 +399,9 @@ public class Controller {
         Platform.runLater(() -> {
             container.getChildren().add(battery.getImage());
         });
-
     }
+
+
 
     /**
      * Método que guarda la referencia de la interfaz principal en una variable de clase.
