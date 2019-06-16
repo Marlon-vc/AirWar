@@ -193,7 +193,6 @@ public class Controller {
         for (int i=0; i<planesList.getSize(); i++) {
             planesList.get(i).updatePos();
         }
-
     }
 
     private void moveMissile(Pane gamePane) {
@@ -276,6 +275,8 @@ public class Controller {
 
         }
     }
+
+
     private boolean checkCollision(double posY, double posX) {
         posX+=5;
         //TODO verificar que el avion esta en el aire
