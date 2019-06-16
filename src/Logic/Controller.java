@@ -6,6 +6,7 @@ import Sprites.Battery;
 import Sprites.Plane;
 import Structures.AdjacencyMatrix;
 import Structures.LinkedList;
+import Structures.Queue;
 import javafx.application.Platform;
 import javafx.scene.control.Alert;
 import javafx.scene.image.Image;
@@ -34,6 +35,10 @@ public class Controller {
         planesList = new LinkedList<>();
     }
 
+    public void stopGame() {
+        isGameRunning = false;
+    }
+
     /**
      * Método que devuelve la instancia de controller.
      * @return Instancia de controller.
@@ -54,6 +59,7 @@ public class Controller {
         Thread loadThread = new Thread(() -> {
             generateAirports(airportCount);
             this.graph = new AdjacencyMatrix(airportList);
+            System.out.println(this.graph);
             renderAirports(gameWindow.getMainContainer());
             System.out.println("Starting game thread..");
             startGameThread(gameWindow.getMainContainer());
@@ -77,17 +83,23 @@ public class Controller {
             long prevTime = System.nanoTime();
             double secsPerTick = 1 / 60.0;
             int tickCount = 0;
+            StringBuilder status;
             while(isGameRunning) {
                 long currentTime = System.nanoTime();
                 long passedTime = currentTime - prevTime;
                 prevTime = currentTime;
                 unprocessedSecs += passedTime /  1000000000.0;
                 while (unprocessedSecs > secsPerTick) {
-                    updateGame(unprocessedSecs);
+                    updateGame(unprocessedSecs / 2);
                     unprocessedSecs -= secsPerTick;
                     tickCount++;
                     if (tickCount % 60 == 0) {
-                        System.out.println(frames + " FPS");
+                        status = new StringBuilder();
+                        status.append("Status\n")
+                                .append(frames).append(" FPS\n")
+                                .append("Airport count: ").append(airportList.getSize()).append("\n")
+                                .append("Planes count: ").append(planesList.getSize()).append("\n");
+//                        System.out.println(status);
                         prevTime += 1000;
                         frames = 0;
                     }
@@ -106,44 +118,44 @@ public class Controller {
      */
     private void updateGame(double secs) {
         //Se cambia el estado de los aeropuertos
-        for (int i=0; i<airportList.getSize(); i++) {
+        int airportCount = airportList.getSize();
+        for (int i=0; i<airportCount; i++) {
             Airport airport = airportList.get(i);
-            if (airport.hasTimeLeft()) {
+            if (!airport.hasTimeLeft()) {
                 if (airport.isEmpty()) {
-//                    lauchNewPlane(airport);
-                    //Generate new plane
                     Plane plane = new Plane(planeImage, airport.getPosX(), airport.getPosY());
-                    plane.setRoute(graph.shortestRoute(airport.getId(),
-                            graph.selectRandom(airport.getId()).getId()));
-
+                    plane.setRouteOrigin(airport);
+                    plane.setSize(25);
+                    Queue<Airport> testRoute = new Queue<>();
+                    testRoute.enqueue(graph.selectRandom(airport.getId()));
+                    plane.setRoute(testRoute);
+                    plane.setOnAir(true);
+//                    plane.setRoute(graph.shortestRoute(airport.getId(), graph.selectRandom(airport.getId()).getId()));
                     planesList.add(plane);
-
-
                 } else {
-                    //TODO lanzar el avión en espera
-                    lauchQueuePlane(airport);
+                    Plane plane = airport.getNextPlane();
+                    plane.nextNode();
+                    plane.setOnAir(true);
                 }
+                airport.setTime(ThreadLocalRandom.current().nextDouble(2, 15));
             } else {
-                //TODO decrementar el tiempo restante.
                 airport.decreaseTime(secs);
             }
         }
 
         //Se cambia el estado de los aviones
-        for (int i=0; i<planesList.getSize(); i++) {
+        int planeCount = planesList.getSize();
+        for (int i=0; i<planeCount; i++) {
             Plane plane = planesList.get(i);
+            plane.nextX();
+            plane.nextY();
 
+            //TODO check if plane is arriving to an airport
         }
     }
 
-    private void lauchNewPlane(Airport current) {
-        Plane plane = new Plane(planeImage, current.getPosX(), current.getPosY());
-
-
-    }
-
-    private void lauchQueuePlane(Airport current) {
-
+    public Pane getMainPane() {
+        return gameWindow.getMainContainer();
     }
 
     /**
@@ -154,12 +166,29 @@ public class Controller {
         //TODO renderizar los cambios en la interfaz.
         for (int i=0; i<planesList.getSize(); i++) {
             Plane plane = planesList.get(i);
-            if (!plane.isVisible()) {
-                Platform.runLater(()->gamePane.getChildren().add(plane.getImage()));
-                plane.setVisibility(true);
+
+            if (plane.isOnAir()) {
+                if (!plane.isVisible()) {
+                    plane.setVisibility(true);
+                    Platform.runLater(() -> gamePane.getChildren().add(plane.getImage()));
+                }
+                plane.updatePos();
             }
 
-            Platform.runLater(plane::updatePos);
+//            if (plane.isOnAir()) {
+//                if (!plane.isVisible()) {
+//                    Platform.runLater(()->gamePane.getChildren().add(plane.getImage()));
+//                    plane.setVisibility(true);
+//
+//                } else {
+//
+//                }
+//
+//                Platform.runLater(plane::updatePos);
+//            } else {
+//                gamePane.getChildren().remove(plane.getImage());
+//            }
+
         }
     }
 
@@ -184,7 +213,7 @@ public class Controller {
             Airport airport = new Airport(airportImage, i,
                     ThreadLocalRandom.current().nextDouble(0, 1281),
                     ThreadLocalRandom.current().nextDouble(0, 721));
-            airport.setTime(ThreadLocalRandom.current().nextDouble(0, 10));
+            airport.setTime(ThreadLocalRandom.current().nextDouble(1, 15));
             airport.setSize(25);
             airportList.add(airport);
         }
@@ -250,6 +279,9 @@ public class Controller {
 //        new Plane(avion, airportList.get(index).getPosX(), airportList.get(index).getPosY(), ruta ,1);
 //    }
 
+    public AdjacencyMatrix getGraph() {
+        return this.graph;
+    }
 
     public void randomTime(){
 //        Duration tickDuration = Duration.ofNanos(250000);
