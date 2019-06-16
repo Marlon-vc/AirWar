@@ -1,6 +1,7 @@
 package Gui;
 
 import Logic.Controller;
+
 import Structures.Timer;
 import javafx.application.Application;
 import javafx.geometry.Insets;
@@ -31,6 +32,7 @@ public class GameWindow extends Application {
         pixelReader = imageColor.getPixelReader();
         Image mapImg = Controller.loadImage("/res/images/map.jpg");
         ImageView mapIV = new ImageView(mapImg);
+
         mapIV.setFitWidth(1280);
         mapIV.setFitHeight(720);
 
@@ -55,7 +57,6 @@ public class GameWindow extends Application {
         playerName.setId("game-label");
         timerBox.setId("game-container");
 
-
         mainLayout.getChildren().addAll(mapIV);
         mainLayout.setTop(timerBox);
 
@@ -64,6 +65,8 @@ public class GameWindow extends Application {
         scene.getStylesheets().add(("file:///" + cwd + "/res/Style/style.css").replace(" ", "%20"));
         stage.setScene(scene);
         stage.setTitle("AirWar");
+        stage.setResizable(false);
+        stage.setOnCloseRequest(windowEvent -> controller.stopGame());
         stage.show();
     }
 

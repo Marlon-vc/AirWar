@@ -14,7 +14,6 @@ import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.image.PixelReader;
 import javafx.scene.layout.Pane;
-import java.util.Random;
 import java.util.concurrent.ThreadLocalRandom;
 
 public class Controller {
@@ -37,6 +36,10 @@ public class Controller {
         planeImage = loadImage("/res/images/plane.png");
         planesList = new LinkedList<>();
         playerName = "";
+    }
+
+    public void stopGame() {
+        isGameRunning = false;
     }
 
     /**
@@ -63,6 +66,7 @@ public class Controller {
             // Se genera la bateria que es donde se dispara a los aviones
             generateBattery(gameWindow.getMainContainer());
             this.graph = new AdjacencyMatrix(airportList);
+            System.out.println(this.graph);
             renderAirports(gameWindow.getMainContainer());
             System.out.println("Starting game thread..");
             startGameThread(gameWindow.getMainContainer());
@@ -85,17 +89,23 @@ public class Controller {
             long prevTime = System.nanoTime();
             double secsPerTick = 1 / 60.0;
             int tickCount = 0;
+            StringBuilder status;
             while(isGameRunning) {
                 long currentTime = System.nanoTime();
                 long passedTime = currentTime - prevTime;
                 prevTime = currentTime;
                 unprocessedSecs += passedTime /  1000000000.0;
                 while (unprocessedSecs > secsPerTick) {
-                    updateGame(unprocessedSecs);
+                    updateGame(unprocessedSecs / 2);
                     unprocessedSecs -= secsPerTick;
                     tickCount++;
                     if (tickCount % 60 == 0) {
-//                        System.out.println(frames + " FPS");
+                        status = new StringBuilder();
+                        status.append("Status\n")
+                                .append(frames).append(" FPS\n")
+                                .append("Airport count: ").append(airportList.getSize()).append("\n")
+                                .append("Planes count: ").append(planesList.getSize()).append("\n");
+//                        System.out.println(status);
                         prevTime += 1000;
                         frames = 0;
                     }
@@ -113,20 +123,45 @@ public class Controller {
      * @param secs Tiempo transcurrido.
      */
     private void updateGame(double secs) {
-        //TODO actualizar el estado del juego
-        for (int i=0; i<airportList.getSize(); i++) {
+        //Se cambia el estado de los aeropuertos
+        int airportCount = airportList.getSize();
+        for (int i=0; i<airportCount; i++) {
             Airport airport = airportList.get(i);
-            if (airport.hasTimeLeft()) {
+            if (!airport.hasTimeLeft()) {
                 if (airport.isEmpty()) {
                     Plane plane = new Plane(planeImage, airport.getPosX(), airport.getPosY());
-                    //TODO inicializar el movimiento del avión.
+                    plane.setRouteOrigin(airport);
+                    plane.setSize(25);
+                    Queue<Airport> testRoute = new Queue<>();
+                    testRoute.enqueue(graph.selectRandom(airport.getId()));
+                    plane.setRoute(testRoute);
+                    plane.setOnAir(true);
+//                    plane.setRoute(graph.shortestRoute(airport.getId(), graph.selectRandom(airport.getId()).getId()));
+                    planesList.add(plane);
                 } else {
-                    //TODO lanzar el avión en espera
+                    Plane plane = airport.getNextPlane();
+                    plane.nextNode();
+                    plane.setOnAir(true);
                 }
+                airport.setTime(ThreadLocalRandom.current().nextDouble(2, 15));
             } else {
-                //TODO decrementar el tiempo restante.
+                airport.decreaseTime(secs);
             }
         }
+
+        //Se cambia el estado de los aviones
+        int planeCount = planesList.getSize();
+        for (int i=0; i<planeCount; i++) {
+            Plane plane = planesList.get(i);
+            plane.nextX();
+            plane.nextY();
+
+            //TODO check if plane is arriving to an airport
+        }
+    }
+
+    public Pane getMainPane() {
+        return gameWindow.getMainContainer();
     }
 
     /**
@@ -135,12 +170,19 @@ public class Controller {
      */
     private void render(Pane gamePane) {
         //TODO renderizar los cambios en la interfaz.
-        for (int i=0; i<planesList.getSize(); i++) {
-            planesList.get(i).updatePos();
-        }
-//        Platform.runLater(()->battery.changePosition());
+        for (int i = 0; i < planesList.getSize(); i++) {
+            Plane plane = planesList.get(i);
 
-        moveMissile(gamePane);
+            if (plane.isOnAir()) {
+                if (!plane.isVisible()) {
+                    plane.setVisibility(true);
+                    Platform.runLater(() -> gamePane.getChildren().add(plane.getImage()));
+                }
+                plane.updatePos();
+            }
+
+            moveMissile(gamePane);
+        }
     }
 
     private void moveMissile(Pane gamePane) {
@@ -204,6 +246,13 @@ public class Controller {
         return false;
     }
 
+    private void createBattery(Pane container) {
+        Image turret = loadImage("res/images/turret2.png");
+        Battery b = new Battery(turret, 100, 100);
+        System.out.println("Se crea la bateria");
+        Platform.runLater(() -> container.getChildren().add(b.getImage()));
+
+    }
 
     /**
      * Método encargado de generar los aeropuertos con posiciones aleatorias.
@@ -219,7 +268,6 @@ public class Controller {
                     ThreadLocalRandom.current().nextDouble(20, 1260),
                     ThreadLocalRandom.current().nextDouble(20, 700));
             airport.setTime(ThreadLocalRandom.current().nextDouble(0, 10));
-
 
             PixelReader pixelReader = gameWindow.getPixelReader();
 
@@ -237,6 +285,7 @@ public class Controller {
 //                System.out.println("Color of airport :" + airport.getId() + " " +colorInt);
 //                System.out.println("Adding airport.. \n");
             }
+
             airportList.add(airport);
         }
 
@@ -332,7 +381,6 @@ public class Controller {
         Platform.runLater(() -> container.getChildren().add(battery.getImage()));
     }
 
-
     /**
      * Método que guarda la referencia de la interfaz principal en una variable de clase.
      * @param gameWindow Interfaz principal.
@@ -353,7 +401,11 @@ public class Controller {
         this.playerName = playerName;
     }
 
-    public double getWeight(int idStart, int idEnd){
+    public double getWeight(int idStart, int idEnd) {
         return graph.getRouteWeight(idStart, idEnd);
+    }
+
+    public AdjacencyMatrix getGraph() {
+        return this.graph;
     }
 }

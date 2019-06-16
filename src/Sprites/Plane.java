@@ -14,6 +14,12 @@ import javafx.scene.paint.Color;
 import javafx.scene.shape.Line;
 import javafx.scene.text.Text;
 import javafx.util.Duration;
+import Structures.LinkedList;
+import Structures.Queue;
+import javafx.application.Platform;
+import javafx.scene.image.Image;
+import javafx.scene.shape.Line;
+
 
 /*TODO:
        Para la trayectoria del avión utilizar una función lineal (y=mx+b).
@@ -21,7 +27,6 @@ import javafx.util.Duration;
        Luego calcular la distancia en X entre los puntos, y dividirla en partes (unas 10 o más).
        Para cada parte (posición en X) calcular la posición respectiva en Y, utilizando la función lineal.
        Mover el avión repitiendo los pasos, sumando a la posición en X una parte.
-       .
 
       TODO:
        Para el ángulo de rotación del avión calcular el ángulo entre la recta que contiene al avión y al destino,
@@ -29,10 +34,15 @@ import javafx.util.Duration;
        .
        https://stackoverflow.com/questions/2676719/calculating-the-angle-between-the-line-defined-by-two-points
     * */
+
 public class Plane extends Sprite {
 
-    private double speed;
-    private Airport currentDestination;
+    private boolean isVisible;
+    private boolean isOnAir;
+
+    private double rotation;
+    private Airport routeTarget;
+    private Airport routeOrigin;
     private Queue<Airport> route;
     private Queue<Airport> internalRoute;
     private LinkedList<Line> linesList;
@@ -42,19 +52,25 @@ public class Plane extends Sprite {
 
     private double m;
     private double b;
+
     private Tooltip tooltip;
 
 
+    private double moveStep;
+    private double totalWeight;
+    private double currentDistance;
+
+    private Controller controller;
+
     public Plane() {
         super();
-        this.speed = 1;
     }
 
     public Plane(Image planeImage, double posX, double posY) {
         super(planeImage, posX, posY);
-        this.speed = 1;
-        route = new Queue<>();
-        internalRoute = new Queue<>();
+        this.controller = Controller.getInstance();
+        this.isVisible = false;
+        this.rotation = 0;
         init();
     }
 
@@ -63,13 +79,11 @@ public class Plane extends Sprite {
 //        int currentIdAirport = currentDestination.getId();
         tooltip = new Tooltip();
         tooltip.setText("Next destination: Airport "  + "\n" +
-                "Destinations to travel: " + "\n" +
-                "Speed of airplane: " + this.speed);
+                "Destinations to travel: "); //TODO destinations to travel
         //TODO colocar en tooltip el siguiente aeropuerto a visitar y los destinos que le faltan por recorrer
         tooltip.setShowDelay(Duration.ZERO);
         Tooltip.install(image, tooltip);
 
-        Controller controller = Controller.getInstance();
         Pane container = controller.getGameWindow();
         linesList = new LinkedList<>();
         orderList = new LinkedList<>();
@@ -167,16 +181,31 @@ public class Plane extends Sprite {
     }
 
 
-    public double getSpeed() {
-        return speed;
+
+    public void setRouteOrigin(Airport origin) {
+        this.routeTarget = origin;
     }
 
-    public void setSpeed(double speed) {
-        this.speed = speed;
+    public boolean isVisible() {
+        return this.isVisible;
     }
 
-    public boolean isEnd() {
-        return (route.getSize() == 0);
+    public void setVisibility(boolean visible) {
+        this.isVisible = visible;
+    }
+
+    public boolean isOnAir() {
+        return this.isOnAir;
+    }
+
+    public void setOnAir(boolean onAir) {
+        this.isOnAir = onAir;
+    }
+
+    @Override
+    public void updatePos() {
+        super.updatePos();
+        image.setRotate(this.rotation);
     }
 
     public Queue<Airport> getRoute() {
@@ -186,5 +215,66 @@ public class Plane extends Sprite {
     public void setRoute(Queue<Airport> route) {
         this.route = route;
         this.internalRoute = this.route;
+        nextNode();
+    }
+
+    public void nextNode() {
+        if (route.getSize() > 0) {
+            //Aeropuerto origen
+            routeOrigin = routeTarget;
+            //Aeropuerto destino
+            routeTarget = route.dequeue();
+
+            //Distancia entre los puntos
+            totalWeight = controller.getGraph().getRouteWeight(routeOrigin.getId(), routeOrigin.getId());
+            System.out.println("Peso: " + totalWeight);
+            //Fracción del movimiento
+            moveStep = totalWeight * 0.05;
+            //Cálculo de la función del movimiento
+            calculateMovement();
+            //Cálculo del ángulo del avión
+            calculateAngle();
+            //Distancia actual en X
+            currentDistance = posX;
+        } else {
+            System.out.println("The plane has no more routes!!");
+        }
+    }
+
+    private void setLine() {
+        Line line = new Line();
+        line.setStyle("-fx-background-color: white; -fx-color-fill: white;");
+        line.setStartX(routeOrigin.getPosX());
+        line.setStartY(routeOrigin.getPosY());
+        line.setEndX(routeTarget.getPosX());
+        line.setEndY(routeTarget.getPosY());
+        Platform.runLater(()->controller.getMainPane().getChildren().add(line));
+    }
+
+    private void calculateMovement() {
+        this.m = (routeTarget.getPosY() - this.posY) / (routeTarget.getPosX() - this.posX);
+        this.b = routeTarget.getPosY() - (this.m * routeTarget.getPosX());
+    }
+
+    private void calculateAngle() {
+
+        double deltaY = (routeOrigin.getPosY() - routeTarget.getPosY());
+        double deltaX = (routeTarget.getPosX() - routeOrigin.getPosX());
+
+        double result = Math.toDegrees(Math.atan2(deltaY, deltaX));
+        this.rotation = (result < 0) ? (360d + result) : result;
+//        System.out.println("Rotation: " + rotation);
+    }
+
+    public void nextX() {
+        this.currentDistance += moveStep;
+        setPosX(this.currentDistance);
+    }
+
+    public void nextY() {
+        setPosY((this.m * this.currentDistance) + this.b);
+    }
+
+    public static void main(String[] args) {
     }
 }

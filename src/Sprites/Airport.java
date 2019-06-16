@@ -30,13 +30,24 @@ public class Airport extends Sprite {
         image.setOnMouseExited(mouseEvent -> image.setEffect(null));
     }
 
+    public int getId() {
+        return id;
+    }
 
     public void setTime(double time) {
         this.time = time;
     }
 
+    public double getTimeLeft() {
+        return this.time;
+    }
+
     public boolean hasTimeLeft() {
         return (time > 0);
+    }
+
+    public void decreaseTime(double time) {
+        this.time -= time;
     }
 
     public boolean isEmpty() {
@@ -51,15 +62,15 @@ public class Airport extends Sprite {
         tooltip.setText(text);
     }
 
-    public int getId() {
-        return id;
-    }
-
     public boolean isCarrier() {
         return isCarrier;
     }
 
     public void setCarrier(boolean carrier) {
         isCarrier = carrier;
+    }
+
+    public Plane getNextPlane() {
+        return planeQueue.dequeue();
     }
 }

@@ -16,6 +16,10 @@ public class Battery extends Sprite {
     public Battery() {
     }
 
+    public Battery(Image image, double posX, double posY) {
+        super(image, posX, posY);
+    }
+
     public Battery(Image image) {
         //La posicion en y no deberia cambiar por lo tanto se mantiene fijo
         //La posicion en x se inicializa en 10 de modo que el objeto inicia en esta posicion de la pantalla
@@ -27,7 +31,7 @@ public class Battery extends Sprite {
     /**
      * El metodo crea un valor random entre 0 y 1 de tal modo que la velocidad es igual a su multiplicacion por ese valor random
      */
-    private void variateSpeed(){
+    public void variateSpeed(){
         Random random = new Random();
         int factor = random.nextInt(1);
         speed = speed*factor;
