@@ -64,16 +64,6 @@ public class Battery extends Sprite {
         }
     }
 
-    /**
-     * Este metodo sera el encargado de realizar el disparo
-     * Se guarda la posicion x,y en el momento en el que se llama el metodo
-     * ********************Falta agregar funcionalidad*******************************
-     */
-    public void shoot() {
-        double x = this.getPosX();
-        double y = this.getPosY();
-
-    }
 
 }
 

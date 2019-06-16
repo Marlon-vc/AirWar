@@ -5,14 +5,18 @@ import Sprites.Airport;
 import Sprites.Battery;
 import Sprites.Missile;
 import Sprites.Plane;
+import Sprites.Sprite;
 import Structures.AdjacencyMatrix;
 import Structures.LinkedList;
 import Structures.Queue;
 import javafx.application.Platform;
+import javafx.geometry.Pos;
 import javafx.scene.control.Alert;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.image.PixelReader;
+import javafx.scene.layout.BorderPane;
+import javafx.scene.layout.HBox;
 import javafx.scene.layout.Pane;
 
 import java.util.concurrent.ThreadLocalRandom;
@@ -33,8 +37,6 @@ public class Controller {
     private boolean right;
 
     private LinkedList<Missile> missileList;
-
-
 
     private Controller() {
         airportImage = loadImage("/res/images/airport2.png");
@@ -255,6 +257,9 @@ public class Controller {
             Missile missile = missileList.get(i);
             missile.updatePos();
         }
+        for (int i=0; i<planesList.getSize(); i++) {
+            planesList.get(i).updatePos();
+        }
     }
 
     public void shootMissile(String keyPressed, Pane gamePane){
@@ -265,7 +270,6 @@ public class Controller {
             Platform.runLater(() -> gamePane.getChildren().add(missile.getImage()));
             missileList.add(missile);
         }
-
     }
 
     private void moveMissile(Pane gamePane) {
@@ -273,6 +277,8 @@ public class Controller {
         Image image = new Image("file://" + System.getProperty("user.dir") +"/res/images/plane.png", 25, 25, false, false);
         Plane plane = new Plane(image, 589, 200);
         planesList.add(plane);
+
+
         Platform.runLater(() -> gamePane.getChildren().add(plane.getImage()));
 
         Image missileImage = loadImage("/res/images/missile1.png");
@@ -305,9 +311,11 @@ public class Controller {
                     explosion.setFitWidth(25);
                     gamePane.getChildren().add(explosion);
                 });
+
             }
         }
     }
+
 
     private boolean checkCollision(double posY, double posX) {
         posX+=5;
@@ -453,15 +461,17 @@ public class Controller {
      */
     public void generateBattery(Pane container){
         Image turret = loadImage("/res/images/turret2.png");
-        battery = new Battery(turret, 10,600);
+        battery = new Battery(turret,10,600);
         battery.setSize(50);
-        Platform.runLater(() -> container.getChildren().add(battery.getImage()));
-//        BorderPane.setAlignment(battery.getImage(), Pos.CENTER);
+        Platform.runLater(() -> {
+            container.getChildren().add(battery.getImage());
+        });
     }
 
     public Pane getGameWindow() {
         return gameWindow.getMainContainer();
     }
+
 
     /**
      * Método que guarda la referencia de la interfaz principal en una variable de clase.
