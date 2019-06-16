@@ -18,7 +18,6 @@ public class Battery extends Sprite {
     public Battery() {
     }
 
-<<<<<<< HEAD
     public Battery(Image image, double posX, double posY) {
         super(image, posX, posY);
     }
@@ -29,8 +28,6 @@ public class Battery extends Sprite {
         super(image, 10, 100);
     }
 
-=======
->>>>>>> Se realizan cambios para realizar el movimiento de la bateria
     public Battery(double posX, double posY) {
         super(posX, posY);
         this.Xmin = 10;
@@ -91,24 +88,6 @@ public class Battery extends Sprite {
 
     }
 
-<<<<<<< HEAD
-=======
-    @Override
-    public void updatePos() {
-        this.getImage().setX(this.getPosX());
-        this.getImage().setY(this.getPosY());
-    }
-
-    public static Image loadImage(String relativePath) {
-        try {
-            return new Image("file://" +
-                    (System.getProperty("user.dir") + relativePath).replaceAll(" ", "%20"));
-        } catch (IllegalArgumentException e) {
-            System.out.println("Couln't load " + relativePath);
-        }
-        return null;
-    }
->>>>>>> Se realizan cambios para realizar el movimiento de la bateria
     public static void main(String[] args) {
 
         Battery b = new Battery(100,100);
