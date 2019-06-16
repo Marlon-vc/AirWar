@@ -6,6 +6,7 @@ public class Ruta {
     private double x2; //x2 y y2 es el punto de destino
     private double y2;
 
+
     public double getX1() {
         return x1;
     }
