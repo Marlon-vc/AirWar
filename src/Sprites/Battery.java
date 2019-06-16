@@ -1,80 +1,67 @@
 package Sprites;
 
-import javafx.application.Platform;
 import javafx.scene.image.Image;
-import javafx.scene.image.ImageView;
-import javafx.scene.layout.Pane;
 
-import java.util.Random;
+import java.util.concurrent.ThreadLocalRandom;
 
 public class Battery extends Sprite {
 
-    double speed = 1;
-    int Xmin;
-    boolean direction = true;
-    double Xmax;
+    private int leftX;
+    private int rightX;
+    private int currentX;
+    private double moveStep;
+    private boolean right;
 
 
     public Battery() {
+        init();
     }
 
     public Battery(Image image, double posX, double posY) {
         super(image, posX, posY);
+        init();
     }
 
     public Battery(Image image) {
         //La posicion en y no deberia cambiar por lo tanto se mantiene fijo
         //La posicion en x se inicializa en 10 de modo que el objeto inicia en esta posicion de la pantalla
         super(image, 10, 100);
+        init();
     }
 
     public Battery(double posX, double posY) {
         super(posX, posY);
-        this.Xmin = 10;
-        this.Xmax = 700;
+        init();
     }
 
-
-
-    /**
-     * El metodo crea un valor random entre 0 y 1 de tal modo que la velocidad es igual a su multiplicacion por ese valor random
-     */
-    public void variateSpeed(){
-        Random random = new Random();
-        double factor = random.nextInt(5);
-        speed = speed * factor;
+    private void init() {
+        this.leftX = 10;
+        this.rightX = 1230;
+        this.currentX = 640;
+        this.right = true;
+        this.moveStep = 5;
     }
 
-    /**
-     * Este metodo se encarga de variar la posicion del objeto segun el valor de velocidad
-     */
-    public void changePosition(){
-        direction = true;
-        variateSpeed();
-        //variateSpeed();
-
-        if (direction) {
-            if (this.posX + speed >= this.Xmax) {
-                direction = false;
-                changePosition();
-            }else{
-                this.posX = this.posX + speed;
-            }
-        }else{
-            if (this.posX - speed < this.Xmin) {
-                direction = true;
-                changePosition();
-            }else{
-                this.posX = this.posX - speed;
-            }
+    public void checkPosition() {
+        if (currentX > rightX) {
+            right = false;
+            moveStep = ThreadLocalRandom.current().nextDouble(0.1, 10);
+//            System.out.println("move step "+moveStep);
+        } else if (currentX < leftX) {
+            right = true;
+            moveStep = ThreadLocalRandom.current().nextDouble(0.1, 10);
+//            System.out.println("move step "+moveStep);
         }
-        this.updatePos();
-
-
-
     }
-    public void move(){
-        this.setPosY(this.getPosY()+ 10);
+
+    public void moveX() {
+        if (right) {
+            currentX += moveStep;
+            setPosX(currentX);
+        } else {
+            currentX -= moveStep;
+            setPosX(currentX);
+        }
     }
 
     /**
@@ -82,26 +69,11 @@ public class Battery extends Sprite {
      * Se guarda la posicion x,y en el momento en el que se llama el metodo
      * ********************Falta agregar funcionalidad*******************************
      */
-    public void shoot(){
+    public void shoot() {
         double x = this.getPosX();
         double y = this.getPosY();
 
     }
 
-    public static void main(String[] args) {
-
-        Battery b = new Battery(100,100);
-        System.out.println(b.getPosX());
-        b.variateSpeed();
-        b.changePosition();
-        System.out.println(b.getPosX());
-        System.out.println(b.getPosY());
-        b.updatePos();
-        System.out.println(b.getImage().getX());
-    }
-
-    public double getSpeed() {
-        return speed;
-    }
 }
 

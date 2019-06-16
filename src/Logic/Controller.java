@@ -5,19 +5,16 @@ import Sprites.Airport;
 import Sprites.Battery;
 import Sprites.Missile;
 import Sprites.Plane;
-import Sprites.Sprite;
 import Structures.AdjacencyMatrix;
 import Structures.LinkedList;
 import Structures.Queue;
 import javafx.application.Platform;
-import javafx.geometry.Pos;
 import javafx.scene.control.Alert;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.image.PixelReader;
-import javafx.scene.layout.BorderPane;
-import javafx.scene.layout.HBox;
 import javafx.scene.layout.Pane;
+
 import java.util.concurrent.ThreadLocalRandom;
 
 public class Controller {
@@ -35,16 +32,16 @@ public class Controller {
     private int planeShotDown;
     private boolean right;
 
+    private LinkedList<Missile> missileList;
+
+
 
     private Controller() {
         airportImage = loadImage("/res/images/airport2.png");
         planeImage = loadImage("/res/images/plane.png");
         planesList = new LinkedList<>();
         playerName = "";
-    }
-
-    public void stopGame() {
-        isGameRunning = false;
+        missileList = new LinkedList<>();
     }
 
     /**
@@ -56,6 +53,39 @@ public class Controller {
             instance = new Controller();
         }
         return instance;
+    }
+
+    /**
+     * Método encargado de cargar una imagen desde la ruta especificada.
+     * @param relativePath Ruta relativa de la imagen.
+     * @return Instancia de la imagen.
+     */
+    public static Image loadImage(String relativePath) {
+        try {
+            return new Image("file://" +
+                    (System.getProperty("user.dir") + relativePath).replaceAll(" ", "%20"));
+        } catch (IllegalArgumentException e) {
+            System.out.println("Couln't load " + relativePath);
+        }
+        return null;
+    }
+
+    /**
+     * Método para mostrar una alerta al usuario
+     * @param message Mensaje a mostrar
+     * @param title Título de la alerta
+     * @param type Tipo de alerta
+     */
+    public static void showAlert(String message, String title, Alert.AlertType type) {
+        Alert showID = new Alert(type);
+        showID.setTitle(title);
+        showID.setHeaderText(null);
+        showID.setContentText(message);
+        showID.showAndWait();
+    }
+
+    public void stopGame() {
+        isGameRunning = false;
     }
 
     /**
@@ -120,6 +150,7 @@ public class Controller {
             }
         });
         gameThread.setDaemon(true);
+        gameThread.setName("Game thread");
         gameThread.start();
     }
 
@@ -164,9 +195,29 @@ public class Controller {
             //TODO check if plane is arriving to an airport
         }
 
-        this.right = true;
-        moveBattery();
-        System.out.println("Done moving");
+        battery.checkPosition();
+        battery.moveX();
+
+        //update missil
+
+        int missileCount = missileList.getSize();
+        LinkedList<Missile> toDelete = new LinkedList<>();
+        for (int i=0; i<missileCount; i++){
+            Missile missile = missileList.get(i);
+            missile.moveY();
+            if (missile.check()){
+                toDelete.add(missile);
+                Platform.runLater(()->getGameWindow().getChildren().remove(missile.getImage()));
+            }
+        }
+
+        System.out.println("Missile list " + missileList);
+        System.out.println("To delete list " + toDelete);
+//
+        int deleteCount = toDelete.getSize();
+        for (int i = 0; i<deleteCount; i++) {
+            missileList.remove(toDelete.get(i));
+        }
     }
 
     public Pane getMainPane() {
@@ -193,17 +244,35 @@ public class Controller {
         for (int i=0; i<planesList.getSize(); i++) {
             planesList.get(i).updatePos();
         }
+
+        //mover bateria
+        battery.updatePos();
+
+        //mover misil
+
+        int missileCount = missileList.getSize();
+        for (int i=0; i<missileCount; i++){
+            Missile missile = missileList.get(i);
+            missile.updatePos();
+        }
+    }
+
+    public void shootMissile(String keyPressed, Pane gamePane){
+        if (keyPressed.equals("SPACE")){
+            Image missileImage = loadImage("/res/images/missile1.png");
+            Missile missile = new Missile(missileImage, battery.getPosX(), battery.getPosY()-20);
+            missile.setSize(10);
+            Platform.runLater(() -> gamePane.getChildren().add(missile.getImage()));
+            missileList.add(missile);
+        }
+
     }
 
     private void moveMissile(Pane gamePane) {
-        //TODO mover proyectil
+        //TODO camiar metodo
         Image image = new Image("file://" + System.getProperty("user.dir") +"/res/images/plane.png", 25, 25, false, false);
         Plane plane = new Plane(image, 589, 200);
-
-
         planesList.add(plane);
-
-
         Platform.runLater(() -> gamePane.getChildren().add(plane.getImage()));
 
         Image missileImage = loadImage("/res/images/missile1.png");
@@ -223,7 +292,7 @@ public class Controller {
                     e.printStackTrace();
                 }
 
-                missile.reduceY();
+//                missile.reduceY();
             } else {
                 this.planeShotDown++;
                 Platform.runLater(() -> {
@@ -238,6 +307,21 @@ public class Controller {
                 });
             }
         }
+    }
+
+    private boolean checkCollision(double posY, double posX) {
+        posX+=5;
+        //TODO verificar que el avion esta en el aire
+        int size = planesList.getSize();
+        for (int i=0; i<size; i++){
+            Plane actual = planesList.get(i);
+            if (actual.getPosX()<posX && (actual.getPosX()+25)>posX){
+                if (actual.getPosY()<posY && (actual.getPosY()+25)>posY){
+                    return true;
+                }
+            }
+        }
+        return false;
     }
 
     private void moveBattery() {
@@ -274,22 +358,6 @@ public class Controller {
             }
 
         }
-    }
-
-
-    private boolean checkCollision(double posY, double posX) {
-        posX+=5;
-        //TODO verificar que el avion esta en el aire
-        int size = planesList.getSize();
-        for (int i=0; i<size; i++){
-            Plane actual = planesList.get(i);
-            if (actual.getPosX()<posX && (actual.getPosX()+25)>posX){
-                if (actual.getPosY()<posY && (actual.getPosY()+25)>posY){
-                    return true;
-                }
-            }
-        }
-        return false;
     }
 
     /**
@@ -367,7 +435,6 @@ public class Controller {
         thread.start();
     }
 
-
     /**
      * Éste método se encarga de mostrar los aeropuertos generados en la interfaz.
      * @param container Contenedor principal de la interfaz.
@@ -381,50 +448,20 @@ public class Controller {
     }
 
     /**
-     * Método encargado de cargar una imagen desde la ruta especificada.
-     * @param relativePath Ruta relativa de la imagen.
-     * @return Instancia de la imagen.
-     */
-    public static Image loadImage(String relativePath) {
-        try {
-            return new Image("file://" +
-                    (System.getProperty("user.dir") + relativePath).replaceAll(" ", "%20"));
-        } catch (IllegalArgumentException e) {
-            System.out.println("Couln't load " + relativePath);
-        }
-        return null;
-    }
-
-    /**
-     * Método para mostrar una alerta al usuario
-     * @param message Mensaje a mostrar
-     * @param title Título de la alerta
-     * @param type Tipo de alerta
-     */
-    public static void showAlert(String message, String title, Alert.AlertType type) {
-        Alert showID = new Alert(type);
-        showID.setTitle(title);
-        showID.setHeaderText(null);
-        showID.setContentText(message);
-        showID.showAndWait();
-    }
-
-    /**
      * Este metodo genera una instancia de la bateria antiaerea
      * @param container es donde se agrega el objeto a la pantalla de juego
      */
     public void generateBattery(Pane container){
         Image turret = loadImage("/res/images/turret2.png");
-        Platform.runLater(() -> container.getChildren().add(battery.getImage()));
         battery = new Battery(turret, 10,600);
         battery.setSize(50);
-        BorderPane.setAlignment(battery.getImage(), Pos.CENTER);
-        Platform.runLater(() -> {
-            container.getChildren().add(battery.getImage());
-        });
+        Platform.runLater(() -> container.getChildren().add(battery.getImage()));
+//        BorderPane.setAlignment(battery.getImage(), Pos.CENTER);
     }
 
-
+    public Pane getGameWindow() {
+        return gameWindow.getMainContainer();
+    }
 
     /**
      * Método que guarda la referencia de la interfaz principal en una variable de clase.
@@ -432,10 +469,6 @@ public class Controller {
      */
     public void setGameWindow(GameWindow gameWindow) {
         this.gameWindow = gameWindow;
-    }
-
-    public Pane getGameWindow() {
-        return gameWindow.getMainContainer();
     }
 
     public String getPlayerName() {

@@ -22,13 +22,16 @@ public class GameWindow extends Application {
     private PixelReader pixelReader;
     private String cwd = System.getProperty("user.dir");
 
+    public static void show() {
+        new GameWindow().start(new Stage());
+    }
 
     @Override
     public void start(Stage stage) {
         mainLayout = new BorderPane();
         initialize();
 
-        Image imageColor = new Image("file://" + cwd +"/res/images/map1.jpg", 1280, 720, false, false);
+        Image imageColor = new Image("file://" + cwd + "/res/images/map1.jpg", 1280, 720, false, false);
         pixelReader = imageColor.getPixelReader();
         Image mapImg = Controller.loadImage("/res/images/map.jpg");
         ImageView mapIV = new ImageView(mapImg);
@@ -47,7 +50,7 @@ public class GameWindow extends Application {
         System.out.println("Player name " + this.controller.getPlayerName());
         Label playerName = new Label("Jugador: " + this.controller.getPlayerName() + " -  Tiempo restante:");
 
-        Timer timer = new Timer(60*5, timerLabel);
+        Timer timer = new Timer(60 * 5, timerLabel);
         timer.startTimer();
 
         timerBox.getChildren().addAll(playerName, timerLabel);
@@ -63,6 +66,7 @@ public class GameWindow extends Application {
         Scene scene = new Scene(mainLayout, 1280, 720);
         stage.setResizable(false);
         scene.getStylesheets().add(("file:///" + cwd + "/res/Style/style.css").replace(" ", "%20"));
+        scene.setOnKeyPressed(keyEvent -> controller.shootMissile(keyEvent.getCode().toString(), mainLayout));
         stage.setScene(scene);
         stage.setTitle("AirWar");
         stage.setResizable(false);
@@ -81,9 +85,5 @@ public class GameWindow extends Application {
     private void initialize() {
         this.controller = Controller.getInstance();
         this.controller.setGameWindow(this);
-    }
-
-    public static void show() {
-        new GameWindow().start(new Stage());
     }
 }

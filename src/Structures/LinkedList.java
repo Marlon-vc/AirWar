@@ -11,6 +11,12 @@ public class LinkedList<T> {
         this.head = this.tail = null;
     }
 
+    public static void main(String[] args) {
+        LinkedList<Integer> integerLinkedList = new LinkedList<>();
+        integerLinkedList.add(1);
+        integerLinkedList.remove(1);
+    }
+
     public void add(T value) {
         Node<T> newNode = new Node<>(value);
 
@@ -25,36 +31,39 @@ public class LinkedList<T> {
 
     public void remove(T value) {
 
-        if (value == this.head.getValue()) {
-            this.head = this.head.getNext();
-            this.size--;
-        }
+        if (this.size > 0) {
 
-        Node<T> prev = this.head;
-        Node<T> current = this.head.getNext();
-
-        for(int i=0; i<this.size-1; i++) {
-            if (current.getValue().equals(value)) {
-                prev.setNext(current.getNext());
-                if (current == this.tail) {
-                    this.tail = prev;
-                }
+            if (value == this.head.getValue()) {
+                this.head = this.head.getNext();
                 this.size--;
-                break;
             } else {
-                prev = current;
-                current = current.getNext();
+                Node<T> prev = this.head;
+                Node<T> current = this.head.getNext();
+
+                for (int i = 0; i < this.size - 1; i++) {
+                    if (current.getValue().equals(value)) {
+                        prev.setNext(current.getNext());
+                        if (current == this.tail) {
+                            this.tail = prev;
+                        }
+                        this.size--;
+                        break;
+                    } else {
+                        prev = current;
+                        current = current.getNext();
+                    }
+                }
             }
         }
     }
 
     public T get(int index) {
-        if (index < 0 || index > this.size-1) {
+        if (index < 0 || index > this.size - 1) {
             throw new IndexOutOfBoundsException(index);
         } else {
 
             Node<T> temp = this.head;
-            for (int i=0; i<index; i++) {
+            for (int i = 0; i < index; i++) {
                 temp = temp.getNext();
             }
             return temp.getValue();
@@ -62,11 +71,11 @@ public class LinkedList<T> {
     }
 
     public void set(int index, T value) {
-        if (index < 0 || index > this.size-1) {
+        if (index < 0 || index > this.size - 1) {
             throw new IndexOutOfBoundsException(index);
         } else {
             Node<T> temp = this.head;
-            for (int i=0; i<this.size; i++) {
+            for (int i = 0; i < this.size; i++) {
                 if (i == index) {
                     temp.setValue(value);
                     break;
@@ -77,7 +86,7 @@ public class LinkedList<T> {
     }
 
     public void insert(int index, T value) {
-        if (index < 0 || index > this.size-1) {
+        if (index < 0 || index > this.size - 1) {
             throw new IndexOutOfBoundsException(index);
         } else {
             Node<T> newNode = new Node<>(value);
@@ -85,7 +94,7 @@ public class LinkedList<T> {
             Node<T> prev = null;
             Node<T> current = this.head;
 
-            for (int i=0; i<this.size; i++) {
+            for (int i = 0; i < this.size; i++) {
                 if (i == index) {
                     if (current == head) {
                         newNode.setNext(this.head);
@@ -121,5 +130,4 @@ public class LinkedList<T> {
         builder.append("]");
         return builder.toString();
     }
-
 }
