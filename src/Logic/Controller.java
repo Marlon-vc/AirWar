@@ -194,6 +194,8 @@ public class Controller {
                 });
             }
         }
+
+
     }
 
     private void moveBattery() {
@@ -420,7 +422,6 @@ public class Controller {
             container.getChildren().add(battery.getImage());
         });
     }
-
 
 
     /**
