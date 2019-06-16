@@ -39,6 +39,7 @@ public class Plane extends Sprite {
     private LinkedList<Text> orderList;
     private LinkedList<Text> weightList;
 
+
     private double m;
     private double b;
     private Tooltip tooltip;
@@ -76,7 +77,7 @@ public class Plane extends Sprite {
 
         image.setOnMouseClicked(mouseEvent -> {
             if (mouseEvent.getButton() == MouseButton.PRIMARY)
-                drawRoute(container);
+                drawRoute(container, controller);
             if (mouseEvent.getButton() == MouseButton.SECONDARY)
                 undraw(container);
         });
@@ -86,7 +87,8 @@ public class Plane extends Sprite {
     }
 
     private void undraw(Pane container) {
-        for (int i=0; i<linesList.getSize(); i++){
+        int size = linesList.getSize();
+        for (int i=0; i<size; i++){
             Text order = orderList.get(i);
             Text weight = weightList.get(i);
             Line line = linesList.get(i);
@@ -98,8 +100,9 @@ public class Plane extends Sprite {
     }
 
 
-    private void drawRoute(Pane container){
-        for (int i=0; i<internalRoute.getSize(); i++) {
+    private void drawRoute(Pane container, Controller controller){
+        int size = internalRoute.getSize();
+        for (int i=0; i<size; i++) {
             Airport startAirport = internalRoute.get(i);
             Airport endAirport = internalRoute.get(i + 1);
 
@@ -122,18 +125,18 @@ public class Plane extends Sprite {
                 linesList.add(line);
 
                 int[] middle = calculateMiddle((int) startPosX, (int) endPosX, (int) startPosY, (int) endPosY);
-                Text weight = new Text("Peso ");
+                String calculateWight = Double.toString(controller.getWeight(startAirport.getId(), endAirport.getId()));
+                Text weight = new Text(calculateWight);
                 weight.setStyle("-fx-font-size: 20; -fx-fill: white;");
                 weight.setX(middle[0]);
-                weight.setY(middle[1]);
+                weight.setY(middle[1]+15);
                 weightList.add(weight);
             }
         }
-
         draw(container);
     }
 
-    public int[] calculateMiddle(int x1, int x2, int y1, int y2){
+    private int[] calculateMiddle(int x1, int x2, int y1, int y2){
         System.out.println("Calculating middle of edge..");
         int[] point = new int[2];
         int x = ((x1 + x2)/2);
@@ -146,7 +149,8 @@ public class Plane extends Sprite {
 
     private void draw(Pane container) {
         undraw(container);
-        for (int i=0; i<linesList.getSize(); i++){
+        int size = linesList.getSize();
+        for (int i=0; i<size; i++){
             Text order = orderList.get(i);
             Text weight = weightList.get(i);
             Line line = linesList.get(i);

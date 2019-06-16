@@ -3,6 +3,7 @@ package Logic;
 import Gui.GameWindow;
 import Sprites.Airport;
 import Sprites.Battery;
+import Sprites.Missile;
 import Sprites.Plane;
 import Structures.AdjacencyMatrix;
 import Structures.LinkedList;
@@ -10,29 +11,26 @@ import Structures.Queue;
 import javafx.application.Platform;
 import javafx.scene.control.Alert;
 import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
 import javafx.scene.image.PixelReader;
 import javafx.scene.layout.Pane;
-
 import java.util.Random;
 import java.util.concurrent.ThreadLocalRandom;
 
 public class Controller {
-
     private static Controller instance;
     private GameWindow gameWindow;
     private LinkedList<Airport> airportList;
     private LinkedList<Plane> planesList;
     private Battery battery;
     private AdjacencyMatrix graph;
-
     private Image airportImage;
     private Image planeImage;
     private boolean isGameRunning;
-
     private String playerName;
-
     private AdjacencyMatrix airportRoutes;
     private ColorUtils colorUtils = new ColorUtils();
+    private int planeShotDown;
 
 
     private Controller() {
@@ -59,18 +57,18 @@ public class Controller {
      */
     public void load(int airportCount, String playerName) {
         this.playerName = playerName;
+        this.planeShotDown = 0;
         GameWindow.show();
         Thread loadThread = new Thread(() -> {
             generateAirports(airportCount);
+            // Se genera la bateria que es donde se dispara a los aviones
+            generateBattery(gameWindow.getMainContainer());
             this.graph = new AdjacencyMatrix(airportList);
             renderAirports(gameWindow.getMainContainer());
             System.out.println("Starting game thread..");
             startGameThread(gameWindow.getMainContainer());
             System.out.println("..done");
-            // Se genera la bateria que es donde se dispara a los aviones
-            generateBattery(gameWindow.getMainContainer());
         });
-
         loadThread.setDaemon(true);
         loadThread.start();
     }
@@ -141,9 +139,72 @@ public class Controller {
         for (int i=0; i<planesList.getSize(); i++) {
             planesList.get(i).updatePos();
         }
-        battery.changePosition();
+//        Platform.runLater(()->battery.changePosition());
 
+        moveMissile(gamePane);
     }
+
+    private void moveMissile(Pane gamePane) {
+        //TODO mover proyectil
+
+
+        Image image = new Image("file://" + System.getProperty("user.dir") +"/res/images/plane.png", 25, 25, false, false);
+        Plane plane = new Plane(image, 589, 200);
+
+        planesList.add(plane);
+
+        Platform.runLater(()->gamePane.getChildren().add(plane.getImage()));
+
+        Image missileImage = loadImage("/res/images/missile1.png");
+        Missile missile = new Missile(missileImage, 600, 700);
+        missile.setSize(10);
+        Platform.runLater(()->gamePane.getChildren().add(missile.getImage()));
+        for (int i=700; i>0; i-=5){
+            double posY = missile.getPosY();
+
+            //TODO verificar si hay algun avion en la posicion del misil
+            boolean collision = checkCollision(posY, missile.getPosX());
+            if (!collision) {
+                Platform.runLater(() -> missile.getImage().setY(posY - 5));
+                try {
+                    Thread.sleep(125);
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+
+                missile.reduceY();
+            } else {
+                this.planeShotDown++;
+                Platform.runLater(()-> {
+                    gamePane.getChildren().remove(missile.getImage());
+                    gamePane.getChildren().remove(plane.getImage());
+                    ImageView explosion = new ImageView(loadImage("/res/images/explosion.png"));
+                    explosion.setX(589);
+                    explosion.setY(200);
+                    explosion.setPreserveRatio(true);
+                    explosion.setFitWidth(25);
+                    gamePane.getChildren().add(explosion);
+                });
+
+            }
+        }
+    }
+
+    private boolean checkCollision(double posY, double posX) {
+        posX+=5;
+        //TODO verificar que el avion esta en el aire
+        int size = planesList.getSize();
+        for (int i=0; i<size; i++){
+            Plane actual = planesList.get(i);
+            if (actual.getPosX()<posX && (actual.getPosX()+25)>posX){
+                if (actual.getPosY()<posY && (actual.getPosY()+25)>posY){
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
+
 
     /**
      * Método encargado de generar los aeropuertos con posiciones aleatorias.
@@ -180,7 +241,7 @@ public class Controller {
             airportList.add(airport);
         }
 
-        testPlane();
+//        testPlane();
     }
 
     private void testPlane() {
@@ -225,8 +286,6 @@ public class Controller {
      * Éste método se encarga de mostrar los aeropuertos generados en la interfaz.
      * @param container Contenedor principal de la interfaz.
      */
-
-
     public void renderAirports(Pane container) {
         //TODO mostrar los aeropuertos en la ventana principal.
         for (int i=0; i<airportList.getSize(); i++) {
@@ -311,8 +370,8 @@ public class Controller {
      * @param container es donde se agrega el objeto a la pantalla de juego
      */
     public void generateBattery(Pane container){
-        Image turret = loadImage("res/images/turret2.png");
-        Battery battery = new Battery(turret);
+        Image turret = loadImage("/res/images/turret2.png");
+        battery = new Battery(turret);
         Platform.runLater(() -> container.getChildren().add(battery.getImage()));
     }
 
@@ -335,5 +394,9 @@ public class Controller {
 
     public void setPlayerName(String playerName) {
         this.playerName = playerName;
+    }
+
+    public double getWeight(int idStart, int idEnd){
+        return graph.getRouteWeight(idStart, idEnd);
     }
 }

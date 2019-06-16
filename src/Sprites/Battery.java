@@ -39,7 +39,6 @@ public class Battery extends Sprite {
     public void changePosition(){
         direction = true;
         variateSpeed();
-
         if (direction) {
             if (this.posX + speed > this.Xmax) {
                 direction = false;
