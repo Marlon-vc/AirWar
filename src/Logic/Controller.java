@@ -144,14 +144,14 @@ public class Controller {
         for (int i=0; i<planesList.getSize(); i++) {
             planesList.get(i).updatePos();
         }
+
     }
 
     private void moveMissile(Pane gamePane) {
         //TODO mover proyectil
-
-
         Image image = new Image("file://" + System.getProperty("user.dir") + "/res/images/plane.png", 25, 25, false, false);
         Plane plane = new Plane(image, 589, 200);
+
 
         planesList.add(plane);
 
@@ -193,22 +193,6 @@ public class Controller {
         }
     }
 
-    private void moveBattery() {
-        int i=0;
-        while (i<1280){
-            int rand = (int) ThreadLocalRandom.current().nextDouble(1, 5);
-            i+= rand;
-            int finalI = i;
-            Platform.runLater(()-> battery.getImage().setX(finalI));
-        }
-
-        while (i>0){
-            int rand = (int) ThreadLocalRandom.current().nextDouble(1, 5);
-            i-= rand;
-            int finalI = i;
-            Platform.runLater(()-> battery.getImage().setX(finalI));
-        }
-    }
 
     private boolean checkCollision(double posY, double posX) {
         posX+=5;
