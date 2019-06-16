@@ -5,14 +5,18 @@ import Sprites.Airport;
 import Sprites.Battery;
 import Sprites.Missile;
 import Sprites.Plane;
+import Sprites.Sprite;
 import Structures.AdjacencyMatrix;
 import Structures.LinkedList;
 import Structures.Queue;
 import javafx.application.Platform;
+import javafx.geometry.Pos;
 import javafx.scene.control.Alert;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.image.PixelReader;
+import javafx.scene.layout.BorderPane;
+import javafx.scene.layout.HBox;
 import javafx.scene.layout.Pane;
 import java.util.Random;
 import java.util.concurrent.ThreadLocalRandom;
@@ -136,12 +140,10 @@ public class Controller {
      */
     private void render(Pane gamePane) {
         //TODO renderizar los cambios en la interfaz.
+
         for (int i=0; i<planesList.getSize(); i++) {
             planesList.get(i).updatePos();
         }
-//        Platform.runLater(()->battery.changePosition());
-
-        moveMissile(gamePane);
     }
 
     private void moveMissile(Pane gamePane) {
@@ -371,9 +373,20 @@ public class Controller {
      */
     public void generateBattery(Pane container){
         Image turret = loadImage("/res/images/turret2.png");
-        battery = new Battery(turret);
         Platform.runLater(() -> container.getChildren().add(battery.getImage()));
+        battery = new Battery(10,600);
+        battery.setImage(turret);
+        battery.setSize(50);
+        BorderPane.setAlignment(battery.getImage(), Pos.CENTER);
+        Platform.runLater(() -> {
+            container.getChildren().add(battery.getImage());
+        });
+
     }
+    public void renderBattery(){
+        battery.changePosition();
+    }
+
 
 
     /**
