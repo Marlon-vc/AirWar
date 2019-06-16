@@ -1,3 +1,4 @@
+import Gui.ConfiguracionWindow;
 import Gui.GameWindow;
 import Gui.InitialWindow;
 
@@ -7,7 +8,8 @@ public class Main {
 
         System.out.println("Starting application..");
 //        GameWindow game = new GameWindow();
-        InitialWindow game = new InitialWindow();
+//        InitialWindow game = new InitialWindow();
+        ConfiguracionWindow game = new ConfiguracionWindow();
         game.show();
 
     }

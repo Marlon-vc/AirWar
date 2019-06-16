@@ -40,4 +40,11 @@ public class Airport extends Sprite {
         planeQueue.enqueue(plane);
     }
 
+    public int getId() {
+        return id;
+    }
+
+    public void setId(int id) {
+        this.id = id;
+    }
 }
