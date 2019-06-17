@@ -283,6 +283,10 @@ public class Controller {
                 }
                 plane.updatePos();
             }
+<<<<<<< HEAD
+=======
+
+>>>>>>> a185a3af9e7e57c635f2b338c4895a139e685934
         }
         for (int i=0; i<planesList.getSize(); i++) {
             planesList.get(i).updatePos();
@@ -463,7 +467,11 @@ public class Controller {
         return this.graph;
     }
 
+<<<<<<< HEAD
     public String getKey() {
         return inputHandler.getShootKey();
     }
+=======
+
+>>>>>>> a185a3af9e7e57c635f2b338c4895a139e685934
 }
