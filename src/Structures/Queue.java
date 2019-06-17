@@ -32,6 +32,18 @@ public class Queue<T> {
         return this.size;
     }
 
+    public T get(int i) {
+        Node<T> temp = this.front.getNext();
+        for (int j=0; j<this.size; j++){
+            if (i == j){
+                return temp.getValue();
+            }
+            temp = temp.getNext();
+        }
+
+        return null;
+    }
+
     @Override
     public String toString() {
         StringBuilder builder = new StringBuilder("<-[");

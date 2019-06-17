@@ -489,7 +489,7 @@ public class Controller {
      * @param container es donde se agrega el objeto a la pantalla de juego
      */
     public void generateBattery(Pane container){
-        Image turret = loadImage("/res/images/turret2.png");
+        Image turret = loadImage("/res/images/battery.png");
         battery = new Battery(turret,10,600);
         battery.setSize(50);
         Platform.runLater(() -> {
@@ -538,4 +538,5 @@ public class Controller {
     public void setPlanesDestroyed(int planesDestroyed) {
         this.planesDestroyed = planesDestroyed;
     }
+
 }
