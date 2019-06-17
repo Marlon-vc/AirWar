@@ -39,9 +39,7 @@ public class Missile extends Sprite {
             this.stop = true;
             return true;
         }
-
         return false;
-
     }
 
     public void setMoveStep(double moveStep) {

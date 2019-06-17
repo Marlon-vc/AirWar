@@ -23,6 +23,7 @@ public class GameWindow extends Application {
     private PixelReader pixelReader;
     private String cwd = System.getProperty("user.dir");
     private InputHandler inputHandler;
+    private Label planesDestroyed;
 
     public static void show() {
         new GameWindow().start(new Stage());
@@ -67,7 +68,14 @@ public class GameWindow extends Application {
         inputConfig.setPreserveRatio(true);
         inputConfig.setFitWidth(30);
         inputConfig.setOnMouseClicked(mouseEvent -> InputConfigurator.show());
-        timerBox.getChildren().add(inputConfig);
+
+
+        //label de estadisticas
+        Label labelPlanes = new Label("- Aviones destruidos: ");
+        planesDestroyed = new Label("0");
+        planesDestroyed.setId("game-label");
+        labelPlanes.setId("game-label");
+        timerBox.getChildren().addAll(labelPlanes, planesDestroyed, inputConfig);
 
         mainLayout.getChildren().addAll(mapIV);
         mainLayout.setTop(timerBox);
@@ -77,11 +85,11 @@ public class GameWindow extends Application {
         scene.getStylesheets().add(("file:///" + cwd + "/res/Style/style.css").replace(" ", "%20"));
 
         scene.setOnKeyPressed(keyEvent -> {
-                System.out.println("Key pressed...");
+//                System.out.println("Key pressed...");
                 inputHandler.setStart(keyEvent.getCode().toString());
         });
         scene.setOnKeyReleased(keyEvent -> {
-                System.out.println("Key released...");
+//                System.out.println("Key released...");
                 inputHandler.setEnd(keyEvent.getCode().toString());
         });
 
@@ -90,6 +98,10 @@ public class GameWindow extends Application {
         stage.setResizable(false);
         stage.setOnCloseRequest(windowEvent -> controller.stopGame());
         stage.show();
+    }
+
+    public void setPlanesDestroyed(int planes){
+        planesDestroyed.setText(Integer.toString(planes));
     }
 
     public Pane getMainContainer() {

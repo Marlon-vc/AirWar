@@ -4,7 +4,6 @@ import Logic.Controller;
 import Structures.LinkedList;
 import Structures.Queue;
 import javafx.application.Platform;
-import javafx.scene.control.Label;
 import javafx.scene.control.Tooltip;
 import javafx.scene.effect.DropShadow;
 import javafx.scene.image.Image;
@@ -14,11 +13,6 @@ import javafx.scene.paint.Color;
 import javafx.scene.shape.Line;
 import javafx.scene.text.Text;
 import javafx.util.Duration;
-import Structures.LinkedList;
-import Structures.Queue;
-import javafx.application.Platform;
-import javafx.scene.image.Image;
-import javafx.scene.shape.Line;
 
 
 /*TODO:
