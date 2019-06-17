@@ -206,10 +206,7 @@ public class Plane extends Sprite {
             //Aeropuerto destino
             routeTarget = route.dequeue();
             //Distancia entre los puntos
-
             double totalWeight = controller.getGraph().getRouteWeight(routeOrigin.getId(), routeOrigin.getId());
-            System.out.println("Peso: " + totalWeight);
-
             //Fracción del movimiento
             moveStep = totalWeight * 0.05;
             //Dirección del movimiento
