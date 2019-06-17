@@ -62,6 +62,13 @@ public class GameWindow extends Application {
         playerName.setId("game-label");
         timerBox.setId("game-container");
 
+        //code to config input
+        ImageView inputConfig = new ImageView(Controller.loadImage("/res/images/config.png"));
+        inputConfig.setPreserveRatio(true);
+        inputConfig.setFitWidth(30);
+        inputConfig.setOnMouseClicked(mouseEvent -> InputConfigurator.show());
+        timerBox.getChildren().add(inputConfig);
+
         mainLayout.getChildren().addAll(mapIV);
         mainLayout.setTop(timerBox);
 
