@@ -4,7 +4,6 @@ import Logic.Controller;
 import Structures.LinkedList;
 import Structures.Queue;
 import javafx.application.Platform;
-import javafx.scene.control.Label;
 import javafx.scene.control.Tooltip;
 import javafx.scene.effect.DropShadow;
 import javafx.scene.image.Image;
@@ -14,11 +13,6 @@ import javafx.scene.paint.Color;
 import javafx.scene.shape.Line;
 import javafx.scene.text.Text;
 import javafx.util.Duration;
-import Structures.LinkedList;
-import Structures.Queue;
-import javafx.application.Platform;
-import javafx.scene.image.Image;
-import javafx.scene.shape.Line;
 
 
 /*TODO:
@@ -37,34 +31,27 @@ import javafx.scene.shape.Line;
 
 public class Plane extends Sprite {
 
-    private boolean isVisible;
+    private boolean right;
     private boolean isOnAir;
+    private boolean isVisible;
 
+    private Tooltip tooltip;
     private double rotation;
     private Airport routeTarget;
     private Airport routeOrigin;
     private Queue<Airport> route;
     private Queue<Airport> internalRoute;
+
     private LinkedList<Line> linesList;
     private LinkedList<Text> orderList;
     private LinkedList<Text> weightList;
 
-
     private double m;
     private double b;
-
-    private Tooltip tooltip;
-
-
     private double moveStep;
-    private double totalWeight;
     private double currentDistance;
 
     private Controller controller;
-
-    public Plane() {
-        super();
-    }
 
     public Plane(Image planeImage, double posX, double posY) {
         super(planeImage, posX, posY);
@@ -74,11 +61,9 @@ public class Plane extends Sprite {
         init();
     }
 
-
     private void init() {
-//        int currentIdAirport = currentDestination.getId();
         tooltip = new Tooltip();
-        tooltip.setText("Next destination: Airport "  + "\n" +
+        tooltip.setText("Next destination: Airport " + "\n" +
                 "Destinations to travel: "); //TODO destinations to travel
         //TODO colocar en tooltip el siguiente aeropuerto a visitar y los destinos que le faltan por recorrer
         tooltip.setShowDelay(Duration.ZERO);
@@ -102,21 +87,20 @@ public class Plane extends Sprite {
 
     private void undraw(Pane container) {
         int size = linesList.getSize();
-        for (int i=0; i<size; i++){
+        for (int i = 0; i < size; i++) {
             Text order = orderList.get(i);
             Text weight = weightList.get(i);
             Line line = linesList.get(i);
-            Platform.runLater(()-> container.getChildren().removeAll(line, order, weight));
+            Platform.runLater(() -> container.getChildren().removeAll(line, order, weight));
         }
 
-        Text order = orderList.get(orderList.getSize()-1);
-        Platform.runLater(()-> container.getChildren().remove(order));
+        Text order = orderList.get(orderList.getSize() - 1);
+        Platform.runLater(() -> container.getChildren().remove(order));
     }
 
-
-    private void drawRoute(Pane container, Controller controller){
+    private void drawRoute(Pane container, Controller controller) {
         int size = internalRoute.getSize();
-        for (int i=0; i<size; i++) {
+        for (int i = 0; i < size; i++) {
             Airport startAirport = internalRoute.get(i);
             Airport endAirport = internalRoute.get(i + 1);
 
@@ -143,18 +127,18 @@ public class Plane extends Sprite {
                 Text weight = new Text(calculateWight);
                 weight.setStyle("-fx-font-size: 20; -fx-fill: white;");
                 weight.setX(middle[0]);
-                weight.setY(middle[1]+15);
+                weight.setY(middle[1] + 15);
                 weightList.add(weight);
             }
         }
         draw(container);
     }
 
-    private int[] calculateMiddle(int x1, int x2, int y1, int y2){
+    private int[] calculateMiddle(int x1, int x2, int y1, int y2) {
         System.out.println("Calculating middle of edge..");
         int[] point = new int[2];
-        int x = ((x1 + x2)/2);
-        int y = ((y1 + y2)/2);
+        int x = ((x1 + x2) / 2);
+        int y = ((y1 + y2) / 2);
         point[0] = x;
         point[1] = y;
         System.out.println("X: " + x + " Y: " + y);
@@ -164,23 +148,20 @@ public class Plane extends Sprite {
     private void draw(Pane container) {
         undraw(container);
         int size = linesList.getSize();
-        for (int i=0; i<size; i++){
+        for (int i = 0; i < size; i++) {
             Text order = orderList.get(i);
             Text weight = weightList.get(i);
             Line line = linesList.get(i);
-            Platform.runLater(()-> container.getChildren().addAll(line, order, weight));
+            Platform.runLater(() -> container.getChildren().addAll(line, order, weight));
         }
 
-        Text order = orderList.get(orderList.getSize()-1);
-        Platform.runLater(()-> container.getChildren().addAll(order));
+        Text order = orderList.get(orderList.getSize() - 1);
+        Platform.runLater(() -> container.getChildren().addAll(order));
     }
 
-
-    public void setTextToTooltip(String text){
+    public void setTextToTooltip(String text) {
         tooltip.setText(text);
     }
-
-
 
     public void setRouteOrigin(Airport origin) {
         this.routeTarget = origin;
@@ -224,12 +205,13 @@ public class Plane extends Sprite {
             routeOrigin = routeTarget;
             //Aeropuerto destino
             routeTarget = route.dequeue();
-
             //Distancia entre los puntos
-            totalWeight = controller.getGraph().getRouteWeight(routeOrigin.getId(), routeOrigin.getId());
+            double totalWeight = controller.getGraph().getRouteWeight(routeOrigin.getId(), routeOrigin.getId());
             System.out.println("Peso: " + totalWeight);
             //Fracción del movimiento
             moveStep = totalWeight * 0.05;
+            //Dirección del movimiento
+            right = !(routeOrigin.getPosX() > routeTarget.getPosX());
             //Cálculo de la función del movimiento
             calculateMovement();
             //Cálculo del ángulo del avión
@@ -248,7 +230,7 @@ public class Plane extends Sprite {
         line.setStartY(routeOrigin.getPosY());
         line.setEndX(routeTarget.getPosX());
         line.setEndY(routeTarget.getPosY());
-        Platform.runLater(()->controller.getMainPane().getChildren().add(line));
+        Platform.runLater(() -> controller.getMainPane().getChildren().add(line));
     }
 
     private void calculateMovement() {
@@ -257,24 +239,23 @@ public class Plane extends Sprite {
     }
 
     private void calculateAngle() {
-
         double deltaY = (routeOrigin.getPosY() - routeTarget.getPosY());
         double deltaX = (routeTarget.getPosX() - routeOrigin.getPosX());
 
         double result = Math.toDegrees(Math.atan2(deltaY, deltaX));
         this.rotation = (result < 0) ? (360d + result) : result;
-//        System.out.println("Rotation: " + rotation);
     }
 
     public void nextX() {
-        this.currentDistance += moveStep;
+        if (right) {
+            this.currentDistance += moveStep;
+        } else {
+            this.currentDistance -= moveStep;
+        }
         setPosX(this.currentDistance);
     }
 
     public void nextY() {
         setPosY((this.m * this.currentDistance) + this.b);
-    }
-
-    public static void main(String[] args) {
     }
 }

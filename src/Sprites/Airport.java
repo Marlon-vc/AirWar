@@ -21,13 +21,13 @@ public class Airport extends Sprite {
         this.id = id;
         this.planeQueue = new Queue<>();
 
-        tooltip = new Tooltip();
-        tooltip.setText("Airport " + id + "\nPos X: " + posX + "\nPos Y: " + posY);
-        tooltip.setShowDelay(Duration.ZERO);
-
-        Tooltip.install(image, tooltip);
-        image.setOnMouseEntered(mouseEvent -> image.setEffect(new DropShadow(5, Color.LIGHTGRAY)));
-        image.setOnMouseExited(mouseEvent -> image.setEffect(null));
+//        tooltip = new Tooltip();
+//        tooltip.setText("Airport " + id + "\nPos X: " + posX + "\nPos Y: " + posY);
+//        tooltip.setShowDelay(Duration.ZERO);
+//
+//        Tooltip.install(image, tooltip);
+//        image.setOnMouseEntered(mouseEvent -> image.setEffect(new DropShadow(5, Color.LIGHTGRAY)));
+//        image.setOnMouseExited(mouseEvent -> image.setEffect(null));
     }
 
     public int getId() {
@@ -72,5 +72,10 @@ public class Airport extends Sprite {
 
     public Plane getNextPlane() {
         return planeQueue.dequeue();
+    }
+
+    @Override
+    public String toString() {
+        return "Aeropuerto " + id;
     }
 }

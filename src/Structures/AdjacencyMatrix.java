@@ -7,15 +7,27 @@ import java.util.concurrent.ThreadLocalRandom;
 
 public class AdjacencyMatrix {
     private LinkedList<Airport> airports;
-    private Weight[][] distancesMatrix;
-    private int[][] routesMatrix;
 
+    private Weight[][] weightMatrix;
+    private Weight[][] distMatrix;
+    private int[][] pathMatrix;
 
     public AdjacencyMatrix(LinkedList<Airport> nodes) {
         int size = nodes.getSize();
         this.airports = nodes;
-        this.distancesMatrix = new Weight[size][size];
+        this.weightMatrix = new Weight[size][size];
         buildMatrix();
+    }
+
+    public static void main(String[] args) {
+        LinkedList<Airport> list = new LinkedList<>();
+
+        for (int i = 0; i < 5; i++) {
+            list.add(new Airport(i, i * 13, i * 13 + 1));
+        }
+        AdjacencyMatrix graph = new AdjacencyMatrix(list);
+
+        System.out.println(graph);
     }
 
     private void buildMatrix() {
@@ -23,41 +35,62 @@ public class AdjacencyMatrix {
         int size = airports.getSize();
         boolean emptyRow;
 
-        for (int i=0; i<size; i++) {
-            emptyRow = true;
+        for(int i=0; i<size; i++) {
             for (int j=0; j<size; j++) {
-                boolean route = ThreadLocalRandom.current().nextBoolean();
-                if(route && (i != j)) {
+                Weight weight = new Weight();
+                weightMatrix[i][j] = weight;
+            }
+        }
+
+        for (int i = 0; i < size; i++) {
+            emptyRow = true;
+            for (int j = 0; j < size; j++) {
+                boolean route = getRandomBoolean();
+
+                if (route && (i != j)) {
+
                     emptyRow = false;
                     createRoute(i, j);
                 }
             }
             if (emptyRow) {
-                createRoute(i, size-1);
+
+                createRoute(i, getRandomIndex(i, size));
             }
+        }
+        System.out.println(this);
+
+        floyd();
+    }
+
+    private int getRandomIndex(int i, int size) {
+        int gen = ThreadLocalRandom.current().nextInt(0, size);
+        if (gen != i) {
+            return gen;
+        } else {
+            return getRandomIndex(i, size);
         }
     }
 
+    private boolean getRandomBoolean() {
+        int num = ThreadLocalRandom.current().nextInt(0, 100);
+        return num < 20;
+    }
+
     private void createRoute(int i, int j) {
+        System.out.println("Creating connection between " + i + " & " + j);
         Airport airportStart = airports.get(i);
         Airport airportEnd = airports.get(j);
         double weight = Math.sqrt(
                 Math.pow(airportEnd.getPosX() - airportStart.getPosX(), 2) +
                         Math.pow(airportEnd.getPosY() - airportStart.getPosY(), 2));
 
-        Weight routeWeight = new Weight(weight);
-        distancesMatrix[i][j] = routeWeight;
-        distancesMatrix[j][i] = routeWeight;
+        weightMatrix[i][j].setRouteWeight(weight);
+        weightMatrix[j][i].setRouteWeight(weight);
     }
 
     public double getRouteWeight(int start, int end) {
-        //TODO eliminar verificación si es null
-        if (distancesMatrix[start][end] != null) {
-            if (distancesMatrix[start][end].getRouteWeight() != 0.0) {
-                return distancesMatrix[start][end].getRouteWeight();
-            }
-        }
-        return -1;
+        return weightMatrix[start][end].getWeight();
     }
 
     public Queue<Airport> shortestRoute(int id1, int id2) {
@@ -69,6 +102,67 @@ public class AdjacencyMatrix {
             System.out.println("Invalid airports id");
         }
         return route;
+    }
+
+    private void floyd() {
+        int size = airports.getSize();
+
+        distMatrix = new Weight[size][size];
+        pathMatrix = new int[size][size];
+
+        for (int i = 0; i < size; i++) {
+            for (int j = 0; j < size; j++) {
+                if (i != j) {
+                    pathMatrix[i][j] = j + 1;
+                }
+            }
+        }
+
+        for (int i = 0; i < size; i++) {
+            Weight weight = new Weight();
+            weight.setRouteWeight(0);
+            distMatrix[i][i] = weight;
+        }
+
+        for (int i = 0; i < size; i++) {
+            for (int j = 0; j < size; j++) {
+                distMatrix[i][j] = weightMatrix[i][j];
+            }
+        }
+
+        for (int k = 0; k < size; k++) {
+            for (int i = 0; i < size; i++) {
+                for (int j = 0; j < size; j++) {
+                    if (distMatrix[i][j].getWeight() >
+                            distMatrix[i][k].getWeight() + distMatrix[k][j].getWeight()) {
+                        distMatrix[i][j].setRouteWeight(
+                                distMatrix[i][k].getWeight() + distMatrix[k][j].getWeight());
+                        pathMatrix[i][j] = pathMatrix[i][k];
+                    }
+                }
+            }
+        }
+
+        printMatrixes();
+    }
+
+    private void printMatrixes() {
+
+        int size = airports.getSize();
+
+        System.out.println("\nWeight Matrix:\n");
+        for (Weight[] row : weightMatrix) {
+            System.out.println(Arrays.toString(row));
+        }
+        System.out.println("\nDistance Matrix\n");
+        for (Weight[] row : distMatrix) {
+            System.out.println(Arrays.toString(row));
+        }
+        System.out.println("\nPath Matrix\n");
+        for (int[] row : pathMatrix) {
+            System.out.println(Arrays.toString(row));
+        }
+        System.out.println("\n");
     }
 
     /**
@@ -90,7 +184,7 @@ public class AdjacencyMatrix {
         StringBuilder builder = new StringBuilder();
         int size = airports.getSize();
 
-        for (Weight[] row: distancesMatrix) {
+        for (Weight[] row : weightMatrix) {
             builder.append(Arrays.toString(row)).append("\n");
         }
         return builder.toString();
@@ -101,17 +195,22 @@ class Weight {
     private double routeWeight;
     private double routeDanger;
 
+    Weight() {
+        this.routeWeight = 0;
+        this.routeDanger = 0;
+    }
+
     Weight(double routeWeight) {
         this.routeWeight = routeWeight;
         this.routeDanger = 0;
     }
 
-    public double getRouteWeight() {
+    public double getWeight() {
         return routeWeight + routeDanger;
     }
 
     public int getPrettyWeight() {
-        return (int)(routeWeight + routeDanger);
+        return (int) (routeWeight + routeDanger);
     }
 
     public void setRouteWeight(double routeWeight) {
@@ -127,7 +226,7 @@ class Weight {
     }
 
     public void decreaseDanger(double danger) {
-        if (this.routeDanger > 0){
+        if (this.routeDanger > 0) {
             this.routeDanger -= danger;
             if (this.routeDanger < 0) {
                 this.routeDanger = 0;
@@ -137,6 +236,6 @@ class Weight {
 
     @Override
     public String toString() {
-        return Integer.toString((int)(routeWeight + routeDanger));
+        return Integer.toString((int) (routeWeight + routeDanger));
     }
 }
