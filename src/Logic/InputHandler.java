@@ -7,10 +7,10 @@ public class InputHandler {
 
     private boolean start;
 
-    public InputHandler(String shootKey) {
+    public InputHandler(String shootKey, Controller instance) {
         this.shootKey = shootKey;
         this.speed = 1;
-        this.controller = Controller.getInstance();
+        this.controller = instance;
         this.start = false;
     }
 

@@ -39,7 +39,7 @@ public class Controller {
 
     private Controller() {
         this.shootKey = "SPACE";
-        this.inputHandler = new InputHandler(shootKey);
+        this.inputHandler = new InputHandler(shootKey, this);
         airportImage = loadImage("/res/images/airport2.png");
         planeImage = loadImage("/res/images/plane.png");
         planesList = new LinkedList<>();
