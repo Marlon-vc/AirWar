@@ -10,13 +10,13 @@ public class Graph {
 
     private LinkedList<Airport> airportList;
 
-    private Weight2[][] weightMatrix;
-    private Weight2[][] distanceMatrix;
+    private Weight[][] weightMatrix;
+    private Weight[][] distanceMatrix;
     private int[][] pathMatrix;
 
     public Graph(LinkedList<Airport> airports, int size) {
         this.airportList = airports;
-        weightMatrix = new Weight2[size][size];
+        weightMatrix = new Weight[size][size];
         calculateWeights();
         floyd();
     }
@@ -42,6 +42,18 @@ public class Graph {
         System.out.println("Distancia de la ruta: " +
                 graph.getRouteWeight(origin, end));
         System.out.println(graph.shortestRoute(origin, end));
+    }
+
+    private void updateGraph() {
+        System.out.println("Updating matrixes to reflect the new weights..");
+        floyd();
+    }
+
+    public void increaseRouteDanger(int id1, int id2) {
+        double danger = 15;
+        System.out.println("Increasing danger for route " + id1 + " & " + id2 + " by " + danger);
+        weightMatrix[id1][id2].increaseDanger(danger);
+        updateGraph();
     }
 
     private void calculateWeights() {
@@ -72,7 +84,7 @@ public class Graph {
     public void floyd() {
         int size = airportList.getSize();
 
-        distanceMatrix = new Weight2[size][size];
+        distanceMatrix = new Weight[size][size];
         pathMatrix = new int[size][size];
 
         fillMatrix(distanceMatrix, size);
@@ -125,10 +137,10 @@ public class Graph {
         print();
     }
 
-    private void fillMatrix(Weight2[][] matrix, int size) {
+    private void fillMatrix(Weight[][] matrix, int size) {
         for (int i = 0; i < size; i++) {
             for (int j = 0; j < size; j++) {
-                matrix[i][j] = new Weight2();
+                matrix[i][j] = new Weight();
             }
         }
     }
@@ -181,7 +193,7 @@ public class Graph {
 
     private void print() {
         System.out.println("\nWeight matrix\n");
-        for (Weight2[] row : weightMatrix) {
+        for (Weight[] row : weightMatrix) {
             System.out.println(Arrays.toString(row));
         }
         System.out.println("\nPath matrix\n");
@@ -189,32 +201,32 @@ public class Graph {
             System.out.println(Arrays.toString(row));
         }
         System.out.println("\nDistances matrix\n");
-        for (Weight2[] row : distanceMatrix) {
+        for (Weight[] row : distanceMatrix) {
             System.out.println(Arrays.toString(row));
         }
     }
 }
 
-class Weight2 {
+class Weight {
     private double weight;
     private double danger;
 
-    public Weight2(double weight) {
+    public Weight(double weight) {
         this.weight = weight;
         danger = 0;
     }
 
-    public Weight2() {
+    Weight() {
 //        weight = Integer.MAX_VALUE;
         weight = -1;
         danger = 0;
     }
 
-    public double getWeight() {
+    double getWeight() {
         return weight + danger;
     }
 
-    public void setWeight(double weight) {
+    void setWeight(double weight) {
         this.weight = weight;
     }
 
@@ -222,8 +234,16 @@ class Weight2 {
         return danger;
     }
 
-    public void setDanger(double danger) {
+    void setDanger(double danger) {
         this.danger = danger;
+    }
+
+    void increaseDanger(double danger) {
+        this.danger += danger;
+    }
+
+    void decreaseDanger(double danger) {
+        this.danger -= danger;
     }
 
     @Override
