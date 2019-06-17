@@ -65,7 +65,7 @@ public class GameWindow extends Application {
 
         Label statisticsLabel = new Label("Estadística");
         statisticsLabel.setAlignment(Pos.TOP_LEFT);
-        Label PlanesKilled = new Label("Aviones: " + this.controller.getPlanesKilled());
+        Label PlanesKilled = new Label("Aviones: " + this.controller.getPlanesDestroyed());
         PlanesKilled.setAlignment(Pos.CENTER);
         statisticsBox.getChildren().addAll(statisticsLabel,PlanesKilled);
 
