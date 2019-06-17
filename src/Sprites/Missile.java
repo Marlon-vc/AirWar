@@ -39,11 +39,7 @@ public class Missile extends Sprite {
             this.stop = true;
             return true;
         }
-
         return false;
-
-        //TODO verificar colision
-
     }
 
     public void setMoveStep(double moveStep) {

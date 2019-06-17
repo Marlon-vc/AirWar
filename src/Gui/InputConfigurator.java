@@ -38,8 +38,6 @@ public class InputConfigurator extends Application{
         Label configLabel = new Label("Presione la nueva tecla a configurar");
         Label inputLabel = new Label();
 
-        //TODO obtener tecla presionada por el usuario
-
         ImageView saveButton = new ImageView(Controller.loadImage("/res/images/save.png"));
         saveButton.setFitHeight(60);
         saveButton.setFitWidth(60);

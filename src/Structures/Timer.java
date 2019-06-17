@@ -1,5 +1,6 @@
 package Structures;
 
+import Logic.Controller;
 import javafx.application.Platform;
 import javafx.scene.control.Label;
 
@@ -9,10 +10,12 @@ public class Timer {
     private int internalTime;
     private Label timerLabel;
     private Thread worker;
+    private Controller controller;
 
     public Timer(int time, Label timerLabel){
         this.time = time;
         this.timerLabel = timerLabel;
+        this.controller = Controller.getInstance();
     }
 
     public void startTimer(){
@@ -30,6 +33,8 @@ public class Timer {
                 }
                 internalTime--;
             }
+
+            this.controller.stopGame();
         });
 
         worker.setDaemon(true);

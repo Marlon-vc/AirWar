@@ -33,7 +33,8 @@ public class Controller {
     private boolean right;
 
     private InputHandler inputHandler;
-   private String shootKey;
+    private String shootKey;
+    private LinkedList<Collision> collisionList;
 
     private LinkedList<Missile> missileList;
 
@@ -46,6 +47,7 @@ public class Controller {
         playerName = "";
         missileList = new LinkedList<>();
         planesDestroyed = 0;
+        collisionList = new LinkedList<>();
     }
 
     /**
@@ -99,6 +101,7 @@ public class Controller {
 
     public void stopGame() {
         isGameRunning = false;
+        Controller.showAlert("El juego a terminado", "Game over", Alert.AlertType.INFORMATION);
     }
 
     /**
@@ -210,6 +213,19 @@ public class Controller {
         battery.checkPosition();
         battery.moveX();
 
+        //remove collision
+
+//        System.out.println("Collistion list " + collisionList       );
+        for (int i=0; i<collisionList.getSize(); i++){
+            Collision collision = collisionList.get(i);
+            if (!collision.hasTimeLeft()) {
+                Platform.runLater(() -> getGameWindow().getChildren().remove(collision.getExplosion()));
+                collisionList.remove(collision);
+            } else {
+                collision.updateTime();
+            }
+        }
+
         //update missil
 
         int missileCount = missileList.getSize();
@@ -221,9 +237,11 @@ public class Controller {
             Collision collision = checkCollision(missile.getPosY(), missile.getPosX());
 
             if (collision != null) {
+                collisionList.add(collision);
                 Plane planeToDelete = collision.getPlane();
                 planesList.remove(planeToDelete);
                 planesDestroyed++;
+                Platform.runLater(()->gameWindow.setPlanesDestroyed(planesDestroyed));
                 collision.setPos(planeToDelete.getPosX(), planeToDelete.getPosY());
                 Platform.runLater(()->{
                     getGameWindow().getChildren().removeAll(planeToDelete.getImage(), missile.getImage());
@@ -231,7 +249,7 @@ public class Controller {
                 });
             }
 
-            //todo eliminar avion y eliminar misil y agregar explosion
+            //todo crear lista de collisiones para eliminar explosiones
             if (missile.check()){
                 toDelete.add(missile);
                 Platform.runLater(()->getGameWindow().getChildren().remove(missile.getImage()));
@@ -296,53 +314,10 @@ public class Controller {
 
     }
 
-    private void moveMissile(Pane gamePane) {
-        //TODO camiar metodo
-        Image image = new Image("file://" + System.getProperty("user.dir") +"/res/images/plane.png", 25, 25, false, false);
-        Plane plane = new Plane(image, 589, 200);
-        planesList.add(plane);
-
-
-        Platform.runLater(() -> gamePane.getChildren().add(plane.getImage()));
-
-        Image missileImage = loadImage("/res/images/missile1.png");
-        Missile missile = new Missile(missileImage, 600, 700);
-        missile.setSize(10);
-        Platform.runLater(() -> gamePane.getChildren().add(missile.getImage()));
-        for (int i = 700; i > 0; i -= 5) {
-            double posY = missile.getPosY();
-
-            //TODO verificar si hay algun avion en la posicion del misil
-            Collision collision = checkCollision(posY, missile.getPosX());
-            if (collision!=null) {
-                Platform.runLater(() -> missile.getImage().setY(posY - 5));
-                try {
-                    Thread.sleep(125);
-                } catch (InterruptedException e) {
-                    e.printStackTrace();
-                }
-
-//                missile.reduceY();
-            } else {
-                Platform.runLater(() -> {
-                    gamePane.getChildren().remove(missile.getImage());
-                    gamePane.getChildren().remove(plane.getImage());
-                    ImageView explosion = new ImageView(loadImage("/res/images/explosion.png"));
-                    explosion.setX(589);
-                    explosion.setY(200);
-                    explosion.setPreserveRatio(true);
-                    explosion.setFitWidth(25);
-                    gamePane.getChildren().add(explosion);
-                });
-
-            }
-        }
-    }
 
 
     private Collision checkCollision(double posY, double posX) {
         posX+=5;
-        //TODO verificar que el avion esta en el aire
         int size = planesList.getSize();
         for (int i=0; i<size; i++){
             Plane actual = planesList.get(i);
@@ -353,7 +328,6 @@ public class Controller {
                         collision.setPlane(actual);
                         collision.setHit(true);
                         return collision;
-                        //todo crear clase de colision y retonar colision
                     }
                 }
             }
@@ -361,43 +335,7 @@ public class Controller {
         return null;
     }
 
-    private void moveBattery() {
-        int leftL=0;
-        int rightL = 1230;
-        int rand = ThreadLocalRandom.current().nextInt(15, 75);
-        System.out.println("sleep " + rand);
-
-        int i = 0;
-
-        while (isGameRunning){
-            if (right) {
-                i += 5;
-
-            } else {
-                i -= 5;
-            }
-            try {
-                Thread.sleep(rand);
-            } catch (InterruptedException e) {
-                e.printStackTrace();
-            }
-            int finalI = i;
-            Platform.runLater(()-> battery.getImage().setX(finalI));
-
-            if (i == rightL) {
-                right = false;
-                rand = ThreadLocalRandom.current().nextInt(5, 60);
-                System.out.println("Sleep: " + rand);
-            } else if (i == leftL) {
-                right = true;
-                rand = ThreadLocalRandom.current().nextInt(5, 60);
-                System.out.println("Sleep: " + rand);
-            }
-
-        }
-    }
-
-    /**
+        /**
      * Método encargado de generar los aeropuertos con posiciones aleatorias.
      * @param count Cantidad de aeropuertos a generar.
      */
@@ -477,7 +415,6 @@ public class Controller {
      * @param container Contenedor principal de la interfaz.
      */
     public void renderAirports(Pane container) {
-        //TODO mostrar los aeropuertos en la ventana principal.
         for (int i=0; i<airportList.getSize(); i++) {
             int finalI = i;
             Platform.runLater(() -> container.getChildren().add(airportList.get(finalI).getImage()));
@@ -490,7 +427,7 @@ public class Controller {
      */
     public void generateBattery(Pane container){
         Image turret = loadImage("/res/images/turret2.png");
-        battery = new Battery(turret,10,600);
+        battery = new Battery(turret,10,635);
         battery.setSize(50);
         Platform.runLater(() -> {
             container.getChildren().add(battery.getImage());
