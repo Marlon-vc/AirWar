@@ -5,13 +5,12 @@ import Sprites.Airport;
 import Sprites.Battery;
 import Sprites.Missile;
 import Sprites.Plane;
-import Structures.AdjacencyMatrix;
+import Structures.Graph;
 import Structures.LinkedList;
 import Structures.Queue;
 import javafx.application.Platform;
 import javafx.scene.control.Alert;
 import javafx.scene.image.Image;
-import javafx.scene.image.ImageView;
 import javafx.scene.image.PixelReader;
 import javafx.scene.layout.Pane;
 
@@ -23,12 +22,11 @@ public class Controller {
     private LinkedList<Airport> airportList;
     private LinkedList<Plane> planesList;
     private Battery battery;
-    private AdjacencyMatrix graph;
+    private Graph graph;
     private Image airportImage;
     private Image planeImage;
     private boolean isGameRunning;
     private String playerName;
-    private AdjacencyMatrix airportRoutes;
     private int planesDestroyed;
     private boolean right;
 
@@ -115,7 +113,7 @@ public class Controller {
             generateAirports(airportCount);
             // Se genera la bateria que es donde se dispara a los aviones
             generateBattery(gameWindow.getMainContainer());
-            this.graph = new AdjacencyMatrix(airportList);
+            this.graph = new Graph(airportList, airportCount);
             System.out.println(this.graph);
             renderAirports(gameWindow.getMainContainer());
             System.out.println("Starting game thread..");
@@ -183,9 +181,12 @@ public class Controller {
                     Plane plane = new Plane(planeImage, airport.getPosX(), airport.getPosY());
                     plane.setRouteOrigin(airport);
                     plane.setSize(25);
-                    Queue<Airport> testRoute = new Queue<>();
-                    testRoute.enqueue(graph.selectRandom(airport.getId()));
-                    plane.setRoute(testRoute);
+
+                    //TODO cambiar la ruta por lag generada en Graph
+//                    Queue<Airport> testRoute = new Queue<>();
+//                    testRoute.enqueue(graph.selectRandom(airport.getId()));
+//                    plane.setRoute(testRoute);
+
                     plane.setOnAir(true);
 //                    plane.setRoute(graph.shortestRoute(airport.getId(), graph.selectRandom(airport.getId()).getId()));
                     planesList.add(plane);
@@ -458,7 +459,7 @@ public class Controller {
         return graph.getRouteWeight(idStart, idEnd);
     }
 
-    public AdjacencyMatrix getGraph() {
+    public Graph getGraph() {
         return this.graph;
     }
 
