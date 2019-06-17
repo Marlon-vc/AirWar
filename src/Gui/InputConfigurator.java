@@ -2,19 +2,15 @@ package Gui;
 
 import Logic.Controller;
 import javafx.application.Application;
-import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Scene;
-import javafx.scene.control.*;
+import javafx.scene.control.Alert;
+import javafx.scene.control.Label;
 import javafx.scene.image.ImageView;
-import javafx.scene.layout.HBox;
-import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
-import javafx.scene.text.Font;
-import javafx.scene.text.FontWeight;
 import javafx.stage.Stage;
 
-public class inputConfigurator extends Application{
+public class InputConfigurator extends Application{
 
 
     private String cwd = System.getProperty("user.dir");
@@ -81,8 +77,8 @@ public class inputConfigurator extends Application{
     }
 
 
-    public void show() {
-        launch(inputConfigurator.class);
+    public static void show() {
+        new InputConfigurator().start(new Stage());
     }
 
 }

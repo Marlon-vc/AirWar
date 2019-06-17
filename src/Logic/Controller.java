@@ -63,6 +63,11 @@ public class Controller {
         return this.inputHandler;
     }
 
+    public void setShootKey(String shootKey) {
+        this.shootKey = shootKey;
+        inputHandler.setShootKey(shootKey);
+    }
+
     /**
      * Método encargado de cargar una imagen desde la ruta especificada.
      * @param relativePath Ruta relativa de la imagen.
@@ -519,5 +524,9 @@ public class Controller {
 
     public AdjacencyMatrix getGraph() {
         return this.graph;
+    }
+
+    public String getKey() {
+        return inputHandler.getShootKey();
     }
 }
