@@ -2,6 +2,7 @@ package Gui;
 
 import Logic.Controller;
 
+import Logic.InputHandler;
 import Structures.Timer;
 import javafx.application.Application;
 import javafx.geometry.Insets;
@@ -21,6 +22,7 @@ public class GameWindow extends Application {
     private BorderPane mainLayout;
     private PixelReader pixelReader;
     private String cwd = System.getProperty("user.dir");
+    private InputHandler inputHandler;
 
     public static void show() {
         new GameWindow().start(new Stage());
@@ -66,7 +68,16 @@ public class GameWindow extends Application {
         Scene scene = new Scene(mainLayout, 1280, 720);
         stage.setResizable(false);
         scene.getStylesheets().add(("file:///" + cwd + "/res/Style/style.css").replace(" ", "%20"));
-        scene.setOnKeyPressed(keyEvent -> controller.shootMissile(keyEvent.getCode().toString(), mainLayout));
+
+        scene.setOnKeyPressed(keyEvent -> {
+                System.out.println("Key pressed...");
+                inputHandler.setStart(keyEvent.getCode().toString());
+        });
+        scene.setOnKeyReleased(keyEvent -> {
+                System.out.println("Key released...");
+                inputHandler.setEnd(keyEvent.getCode().toString());
+        });
+
         stage.setScene(scene);
         stage.setTitle("AirWar");
         stage.setResizable(false);
@@ -85,5 +96,9 @@ public class GameWindow extends Application {
     private void initialize() {
         this.controller = Controller.getInstance();
         this.controller.setGameWindow(this);
+        this.inputHandler = controller.getInputHandler();
+
     }
+
+
 }

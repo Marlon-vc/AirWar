@@ -46,5 +46,7 @@ public class Missile extends Sprite {
 
     }
 
-
+    public void setMoveStep(double moveStep) {
+        this.moveStep = moveStep;
+    }
 }

@@ -5,18 +5,14 @@ import Sprites.Airport;
 import Sprites.Battery;
 import Sprites.Missile;
 import Sprites.Plane;
-import Sprites.Sprite;
 import Structures.AdjacencyMatrix;
 import Structures.LinkedList;
 import Structures.Queue;
 import javafx.application.Platform;
-import javafx.geometry.Pos;
 import javafx.scene.control.Alert;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.image.PixelReader;
-import javafx.scene.layout.BorderPane;
-import javafx.scene.layout.HBox;
 import javafx.scene.layout.Pane;
 
 import java.util.concurrent.ThreadLocalRandom;
@@ -33,17 +29,23 @@ public class Controller {
     private boolean isGameRunning;
     private String playerName;
     private AdjacencyMatrix airportRoutes;
-    private int planeShotDown;
+    private int planesDestroyed;
     private boolean right;
+
+    private InputHandler inputHandler;
+   private String shootKey;
 
     private LinkedList<Missile> missileList;
 
     private Controller() {
+        this.shootKey = "SPACE";
+        this.inputHandler = new InputHandler(shootKey);
         airportImage = loadImage("/res/images/airport2.png");
         planeImage = loadImage("/res/images/plane.png");
         planesList = new LinkedList<>();
         playerName = "";
         missileList = new LinkedList<>();
+        planesDestroyed = 0;
     }
 
     /**
@@ -55,6 +57,10 @@ public class Controller {
             instance = new Controller();
         }
         return instance;
+    }
+
+    public InputHandler getInputHandler() {
+        return this.inputHandler;
     }
 
     /**
@@ -96,7 +102,6 @@ public class Controller {
      */
     public void load(int airportCount, String playerName) {
         this.playerName = playerName;
-        this.planeShotDown = 0;
         GameWindow.show();
         Thread loadThread = new Thread(() -> {
             generateAirports(airportCount);
@@ -207,15 +212,28 @@ public class Controller {
         for (int i=0; i<missileCount; i++){
             Missile missile = missileList.get(i);
             missile.moveY();
+
+            Collision collision = checkCollision(missile.getPosY(), missile.getPosX());
+
+            if (collision != null) {
+                Plane planeToDelete = collision.getPlane();
+                planesList.remove(planeToDelete);
+                planesDestroyed++;
+                collision.setPos(planeToDelete.getPosX(), planeToDelete.getPosY());
+                Platform.runLater(()->{
+                    getGameWindow().getChildren().removeAll(planeToDelete.getImage(), missile.getImage());
+                    getGameWindow().getChildren().add(collision.getExplosion());
+                });
+            }
+
+            //todo eliminar avion y eliminar misil y agregar explosion
             if (missile.check()){
                 toDelete.add(missile);
                 Platform.runLater(()->getGameWindow().getChildren().remove(missile.getImage()));
             }
         }
 
-        System.out.println("Missile list " + missileList);
-        System.out.println("To delete list " + toDelete);
-//
+
         int deleteCount = toDelete.getSize();
         for (int i = 0; i<deleteCount; i++) {
             missileList.remove(toDelete.get(i));
@@ -262,14 +280,15 @@ public class Controller {
         }
     }
 
-    public void shootMissile(String keyPressed, Pane gamePane){
-        if (keyPressed.equals("SPACE")){
-            Image missileImage = loadImage("/res/images/missile1.png");
-            Missile missile = new Missile(missileImage, battery.getPosX(), battery.getPosY()-20);
-            missile.setSize(10);
-            Platform.runLater(() -> gamePane.getChildren().add(missile.getImage()));
-            missileList.add(missile);
-        }
+    public void shootMissile(double speed){
+
+        Image missileImage = loadImage("/res/images/missile1.png");
+        Missile missile = new Missile(missileImage, battery.getPosX() + 25, battery.getPosY()-20);
+        missile.setSize(10);
+        missile.setMoveStep(speed);
+        Platform.runLater(() -> getGameWindow().getChildren().add(missile.getImage()));
+        missileList.add(missile);
+
     }
 
     private void moveMissile(Pane gamePane) {
@@ -289,8 +308,8 @@ public class Controller {
             double posY = missile.getPosY();
 
             //TODO verificar si hay algun avion en la posicion del misil
-            boolean collision = checkCollision(posY, missile.getPosX());
-            if (!collision) {
+            Collision collision = checkCollision(posY, missile.getPosX());
+            if (collision!=null) {
                 Platform.runLater(() -> missile.getImage().setY(posY - 5));
                 try {
                     Thread.sleep(125);
@@ -300,7 +319,6 @@ public class Controller {
 
 //                missile.reduceY();
             } else {
-                this.planeShotDown++;
                 Platform.runLater(() -> {
                     gamePane.getChildren().remove(missile.getImage());
                     gamePane.getChildren().remove(plane.getImage());
@@ -317,19 +335,25 @@ public class Controller {
     }
 
 
-    private boolean checkCollision(double posY, double posX) {
+    private Collision checkCollision(double posY, double posX) {
         posX+=5;
         //TODO verificar que el avion esta en el aire
         int size = planesList.getSize();
         for (int i=0; i<size; i++){
             Plane actual = planesList.get(i);
-            if (actual.getPosX()<posX && (actual.getPosX()+25)>posX){
-                if (actual.getPosY()<posY && (actual.getPosY()+25)>posY){
-                    return true;
+            if (actual.isOnAir()) {
+                if (actual.getPosX() < posX && (actual.getPosX() + 25) > posX) {
+                    if (actual.getPosY() < posY && (actual.getPosY() + 25) > posY) {
+                        Collision collision = new Collision(loadImage("/res/images/explosion.png"));
+                        collision.setPlane(actual);
+                        collision.setHit(true);
+                        return collision;
+                        //todo crear clase de colision y retonar colision
+                    }
                 }
             }
         }
-        return false;
+        return null;
     }
 
     private void moveBattery() {

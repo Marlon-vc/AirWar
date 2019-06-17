@@ -59,7 +59,7 @@ public class LinkedList<T> {
 
     public T get(int index) {
         if (index < 0 || index > this.size - 1) {
-            throw new IndexOutOfBoundsException(index);
+            return null;
         } else {
 
             Node<T> temp = this.head;

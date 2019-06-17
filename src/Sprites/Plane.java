@@ -227,7 +227,7 @@ public class Plane extends Sprite {
 
             //Distancia entre los puntos
             totalWeight = controller.getGraph().getRouteWeight(routeOrigin.getId(), routeOrigin.getId());
-            System.out.println("Peso: " + totalWeight);
+//            System.out.println("Peso: " + totalWeight);
             //Fracción del movimiento
             moveStep = totalWeight * 0.05;
             //Cálculo de la función del movimiento
