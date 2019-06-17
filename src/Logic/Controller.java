@@ -272,7 +272,6 @@ public class Controller {
      * @param gamePane Contenedor principal de la intefaz.
      */
     private void render(Pane gamePane) {
-        //TODO renderizar los cambios en la interfaz.
         for (int i = 0; i < planesList.getSize(); i++) {
             Plane plane = planesList.get(i);
 
