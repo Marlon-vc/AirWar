@@ -59,7 +59,7 @@ void LightLED(){
   digitalWrite(pinLED,HIGH);
   delay(100);
   digitalWrite(pinLED,LOW);
-  delay(8);
+  delay(10);
 }
 
 void checkCrashed(){
