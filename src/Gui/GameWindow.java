@@ -92,6 +92,7 @@ public class GameWindow extends Application {
         stage.show();
     }
 
+
     public Pane getMainContainer() {
         return this.mainLayout;
     }
