@@ -36,7 +36,6 @@
     -fx-background-insets: -4, -4;
 }
 
-<<<<<<< HEAD
 
 #label-input {
     -fx-font-size: 18px;
@@ -53,8 +52,6 @@
     -fx-text-alignment: center;
 }
 
-=======
->>>>>>> Se agregan estilos para la informacion de la estadisticas
 #game-label {
     -fx-text-fill: white;
     -fx-font-size: 24;

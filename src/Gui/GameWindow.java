@@ -89,6 +89,7 @@ public class GameWindow extends Application {
         inputConfig.setOnMouseClicked(mouseEvent -> InputConfigurator.show());
         timerBox.getChildren().add(inputConfig);
 
+
         statisticsLabel.setId("statistics-title");
         PlanesKilled.setId("statistics-label");
 
