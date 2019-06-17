@@ -44,7 +44,7 @@ public class InputHandler {
         Thread thread = new Thread(()->{
             System.out.println("Starting thread of input...");
             while(start){
-                if (speed < 50) {
+                if (speed < 25) {
                     speed += 0.25;
                     System.out.println("Speed " + speed);
                 }

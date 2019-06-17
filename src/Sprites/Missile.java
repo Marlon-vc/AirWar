@@ -42,8 +42,6 @@ public class Missile extends Sprite {
 
         return false;
 
-        //TODO verificar colision
-
     }
 
     public void setMoveStep(double moveStep) {
